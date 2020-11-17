@@ -15,18 +15,18 @@ import time
 from bs4 import BeautifulSoup
 from lxml import etree
 from configs import useragents
-from utils.translate import cat_to_chs
 from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import format_content_p, \
     all_tag_replace_html
 from utils.timeUtil import now_datetime, now_datetime_no, now_time
+from utils.translate import cat_to_chs, translated_cn, en_con_to_cn_con
 from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import get_image, update_img
-from utils.youdaoutil import youdao_id_en, id_con_to_cn_con
 
-# ansa it
+
+# ansa 意大利语
 
 class AnsaSpider(object):
     def __init__(self):
@@ -115,15 +115,15 @@ class AnsaSpider(object):
                 image_url = self.get_image_url(html)
                 caption = self.get_caption(html)
                 contents_html = self.get_content_html(con)
-                cn_title = youdao_id_en(title, 'it')
+                cn_title = translated_cn(title, 'it')
                 if not contents_html:
                     pass
                 else:
                     if caption:
-                        cn_caption = youdao_id_en(caption, 'it')
+                        cn_caption = translated_cn(caption, 'it')
                     else:
                         cn_caption = ""
-                    cn_content_ = id_con_to_cn_con(contents_html, 'it')
+                    cn_content_ = en_con_to_cn_con(contents_html, 'it')
                     if cn_content_:
                         if image_url:
                             image_url = self.first_url + image_url
