@@ -178,7 +178,7 @@ def get_list_page_get_content(url, headers, charset=None):
         st, content = download_html_get_content(url, headers=headers, charset=charset)
         if st == 0:
             sleep_short()
-            retry=retry+1
+            retry = retry + 1
         else:
             pass
     return st, content
@@ -229,6 +229,50 @@ def get_download_html_proxies(url, headers=None, proxies=None):
 
 
 def post_download_html_proxies(url, headers=None, proxies=None, data=None):
+    '''
+    post 请求 带代理ip
+    :param url:
+    :param headers:
+    :param proxies:
+    :return:
+    '''
+    st = 0
+    try:
+        r = requests.post(url, data=data, headers=headers, proxies=proxies, allow_redirects=False,
+                          timeout=(5, 10), verify=False)
+        if r.status_code == 200:
+            st = 1
+            content = r.text
+        else:
+            content = ''
+    except Exception as e:
+        log.info(e)
+        content = ''
+    return st, content
+
+
+def post_list_page_no_proxies(url, headers, data=None):
+    '''
+    请求
+    :param url:
+    :param headers:
+    :return:
+    '''
+    global content
+    retry = 0
+    st = 0  # st  1:fail 1:success
+    while not st and (retry < 3):
+        st, content = post_download_html_post(url, headers=headers, data=data)
+        if st == 0:
+            sleep_short()
+            retry = retry + 1
+            log.info("youdao requests erro")
+        else:
+            pass
+    return st, content
+
+
+def post_download_html_no_proxies(url, headers=None, proxies=None, data=None):
     '''
     post 请求 带代理ip
     :param url:
