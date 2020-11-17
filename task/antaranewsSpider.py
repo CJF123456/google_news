@@ -23,10 +23,10 @@ from utils.datautil import format_content_p, \
 from utils.timeUtil import now_datetime, now_datetime_no
 from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import get_image, update_img
-from utils.translate import translated_cn, en_con_to_cn_con
+from utils.youdaoutil import id_con_to_cn_con, youdao_id_en
 
 
-# 安塔拉新闻
+# 安塔拉新闻 id
 
 class AntaranewsSpider(object):
     def __init__(self):
@@ -112,16 +112,16 @@ class AntaranewsSpider(object):
                 image_url = self.get_image_url(con)
                 caption = self.get_caption(html)
                 contents_html = self.get_content_html(con)
-                cn_title = translated_cn(title, 'id')
+                cn_title = youdao_id_en(title, 'id')
                 if not contents_html:
                     pass
                 else:
                     contents_html = subhead + self.get_content_html(con)
                     if caption:
-                        cn_caption = translated_cn(caption, 'id')
+                        cn_caption = youdao_id_en(caption, 'id')
                     else:
                         cn_caption = ""
-                    cn_content_ = en_con_to_cn_con(contents_html, 'id')
+                    cn_content_ = id_con_to_cn_con(contents_html, 'id')
                     if cn_content_:
                         if image_url:
                             ii = get_image(image_url)
