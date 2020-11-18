@@ -24,7 +24,7 @@ from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import update_img, get_image
 
 
-# 纽约中文网
+# 纽约中文网 en
 
 class CnNytimesSpider(object):
     def __init__(self):

@@ -26,7 +26,7 @@ from utils.datautil import filter_emoji, format_info_list_str, filter_html_clear
 from utils.timeUtil import now_datetime, now_time
 
 
-# 路透中文网 已完结
+# 路透中文网 en
 class CnReutersSpider(object):
     def __init__(self):
         # 来源
