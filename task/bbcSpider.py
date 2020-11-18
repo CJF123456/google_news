@@ -25,7 +25,7 @@ from utils.datautil import filter_html_clear_format, format_content_p, \
 from utils.timeUtil import now_datetime, now_time
 
 
-# bbc中文网 已完结
+# bbc中文网 en
 
 class BbcSpider(object):
     def __init__(self):
