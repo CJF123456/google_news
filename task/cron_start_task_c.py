@@ -8,9 +8,6 @@
 import sys
 
 sys.path.append('..')
-import time
-from mylog.mlog import log
-from utils.timeUtil import now_datetime
 from task.cnReutersSpider import CnReutersSpider
 from task.dwNewsSpider import DwNewsSpider
 from task.sputnikNewsSpider import SputnikNewsSpider
@@ -21,20 +18,17 @@ from task.dwzhSpider import DwzhSpider
 from task.kyodonewsSpider import KyodonewsSpider
 from task.ltnSpider import LtnSpider
 from task.udnSpider import UdnSpider
-
-# from task.kompasSpider import KompasSpider
-# from task.thejakartaSpider import ThejakartaSpider
-# from task.nedSpider import NedSpider
-# from task.ansaSpider import AnsaSpider
-# from task.smhSpider import SmhSpider
-# from task.inquirerSpider import InquirerSpider
-# from task.republikaSpider import RepublikaSpider
-# from task.antaranewsSpider import AntaranewsSpider
-# import time
-#
-# from mylog.mlog import log
-# from utils.timeUtil import now_datetime
-# from task.aljazeeraSpider import AljazeeraSpider
+from task.kompasSpider import KompasSpider
+from task.thejakartaSpider import ThejakartaSpider
+from task.nedSpider import NedSpider
+from task.smhSpider import SmhSpider
+from task.inquirerSpider import InquirerSpider
+from task.republikaSpider import RepublikaSpider
+from task.antaranewsSpider import AntaranewsSpider
+import time
+from mylog.mlog import log
+from utils.timeUtil import now_datetime
+from task.aljazeeraSpider import AljazeeraSpider
 '''
     定时
 '''
@@ -47,13 +41,12 @@ def parse_it():
 
 
 def parse_id():
-    pass
     # 安塔拉
-    # AntaranewsSpider().parse()
-    # # 印尼罗盘网 完结
-    # KompasSpider().parse()
-    # # 印尼共和报 完结
-    # RepublikaSpider().parse()
+    AntaranewsSpider().parse()
+    # 印尼罗盘网 完结
+    KompasSpider().parse()
+    # 印尼共和报 完结
+    RepublikaSpider().parse()
 
 
 def parse_cn():
@@ -80,17 +73,16 @@ def parse_cn():
 
 
 def pasrse_en():
-    pass
-    # # 半岛电视台 完结
-    # AljazeeraSpider().parse()
-    # # 雅加达邮报 完结
-    # ThejakartaSpider().parse()
-    # # 美国国家民主基金会 完结
-    # NedSpider().parse()
-    # # 澳大利亚悉尼先驱晨报 完结
-    # SmhSpider().parse()
-    # # 菲律宾每日询问报 完结
-    # InquirerSpider().parse()
+    # 半岛电视台 完结
+    AljazeeraSpider().parse()
+    # 雅加达邮报 完结
+    ThejakartaSpider().parse()
+    # 美国国家民主基金会 完结
+    NedSpider().parse()
+    # 澳大利亚悉尼先驱晨报 完结
+    SmhSpider().parse()
+    # 菲律宾每日询问报 完结
+    InquirerSpider().parse()
 
 
 def parse_c():
@@ -98,6 +90,8 @@ def parse_c():
     start_time = time.time()
     log.info('parse_c spider start... ')
     parse_cn()
+    pasrse_en()
+    parse_id()
     end_time = time.time()
     log.info('parse_c spider succ.' + now_datetime() + '.time consuming :%.2f' % (end_time - start_time))
 
