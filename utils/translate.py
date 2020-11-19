@@ -108,7 +108,7 @@ def translated_cn(tran_str,cn_info):
 def en_con_to_cn_con(tran_str,cn_info):
     global cn_content
     tran_str_ = tran_str.replace("</p><p>", "\n\n\n").replace("<p>", "").replace("</p>", "")
-    spilt_num = len(tran_str_) // 2000
+    spilt_num = len(tran_str_) // 1999
     start_num = 0
     no_cn_contents = []
     for i in range(1, spilt_num + 2):
