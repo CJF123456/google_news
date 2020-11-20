@@ -50,7 +50,7 @@ def parse_id():
     RepublikaSpider().parse()
 
 
-def parse_cn():
+def parse_en():
     # bbc中文网 完结
     BbcSpider().parse()
     # 德国之声 完结
@@ -73,7 +73,7 @@ def parse_cn():
     LtnSpider().parse()
 
 
-def pasrse_en():
+def pasrse_cn():
     # 半岛电视台 完结
     AljazeeraSpider().parse()
     # 雅加达邮报 完结
@@ -90,8 +90,8 @@ def parse_c():
     # 中文
     start_time = time.time()
     log.info('parse_c spider start... ')
-    parse_cn()
-    pasrse_en()
+    parse_en()
+    pasrse_cn()
     parse_id()
     end_time = time.time()
     log.info('parse_c spider succ.' + now_datetime() + '.time consuming :%.2f' % (end_time - start_time))
