@@ -327,9 +327,9 @@ def format_content_p(con_text):
     for con in con_:
         if con:
             if "<p>" in con:
-                con = con.replace("<p>", "").lstrip().strip()
+                con = con.replace("<p>", "").strip().lstrip()
             if "</p>" in con:
-                con = con.replace("</p>", "").lstrip().strip()
+                con = con.replace("</p>", "").strip().lstrip()
             if con.startswith("延伸阅读"):
                 pass
             else:
