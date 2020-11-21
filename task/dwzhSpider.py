@@ -75,7 +75,7 @@ class DwzhSpider(object):
                     url_code = ""
                 try:
                     title = el.xpath('./a/h2/text()')
-                    title = "".join(title).strip().lstrip()
+                    title = "".join(title).strip()
                 except Exception as e:
                     print(e)
                     title = ""
