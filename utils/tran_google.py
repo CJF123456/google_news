@@ -1,11 +1,14 @@
 # -*- encoding:utf-8 -*-
 import sys
 
+
 sys.path.append('..')
+import time
 import json
 import execjs
 import requests
 from retry import retry
+from mylog.mlog import log
 from utils.get_ips import get_ip
 
 if sys.version_info[0] == 2:  # Python 2
@@ -94,23 +97,37 @@ def translate(content):
     #       return ""
 
 
-@retry(tries=3)
-def translate_zh(content,info_cn):
-    if len(content) == 0:
-        return ""
-    js = Py4Js()
-    tk = js.getTk(content)
-    url = "https://translate.google.cn/translate_a/single?client=webapp&sl="+info_cn+"&tl=zh-CN&hl=zh-CN&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&pc=1&otf=1&ssel=0&tsel=0&kc=1&tk={}".format(
-        tk)
-    data = {"q": content}
-    response = requests.post(url, data=data, headers=headers, proxies=proxies)
-    result = response.content
-    item = json.loads(result)
-    texts = ""
-    for i in range(0, len(item[0])):
-        if str(item[0][i][0]) != "None":
-            texts += str(item[0][i][0])
-    return texts
+# @retry(tries=3)
+def translate_zh(content, info_cn):
+    num = 0
+    while True:
+        try:
+            if len(content) == 0:
+                return ""
+            js = Py4Js()
+            tk = js.getTk(content)
+            url = "https://translate.google.cn/translate_a/single?client=webapp&sl=" + info_cn + "&tl=zh-CN&hl=zh-CN&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&pc=1&otf=1&ssel=0&tsel=0&kc=1&tk={}".format(
+                tk)
+            data = {"q": content}
+            response = requests.post(url, data=data, headers=headers, proxies=proxies)
+            result = response.content
+            item = json.loads(result)
+            translated = ""
+            for i in range(0, len(item[0])):
+                if str(item[0][i][0]) != "None":
+                    translated += str(item[0][i][0])
+        except Exception as e:
+            time.sleep(1)
+            translated = ""
+        if translated:
+            break
+        num = num + 1
+        if num >= 10:
+            translated = ""
+            log.info("translator fail")
+            time.sleep(1)
+        break
+    return translated
 
 
 # 将英文翻译成中文
@@ -133,6 +150,7 @@ def zh(content):
         if str(item[0][i][0]) != "None":
             texts += str(item[0][i][0])
     return texts
+
 
 # 意大利语翻中文
 @retry(tries=3)
@@ -241,4 +259,5 @@ if __name__ == '__main__':
     # print(get_zh('hello').decode('utf-8'))
     # s = Py4Js()
     # get_translate_zh('[ โยธิน เปาอินทร์ กับ การดูแลผู้สูงอายุ ผู้ป่วยติดเตียงเพื่อลดความเหลื่อมล้ำในจังหวัดอ่างทอง ] . อีกเพียง 53 วัน ก็จะถึงวันที่ 20 ธันวาคม 2563 ที่จะมีการเลือกตั้งท้องถิ่นครั้งสำคัญ เพราะเป็นการเลือกตั้งท้องถิ่นครั้งแรกในรอบเกือบสิบปี . สนามการเลือกตั้งท้องถิ่นแรก คือ สนามระดับองค์การบริหารส่วนจังหวัด หรือ อบจ. . พวกเรา #คณะก้าวหน้า ตั้งใจทำงานการเมืองท้องถิ่นให้ดี นำเสนอนโยบายที่ตอบสนองความต้องการของประชาชน ผู้สมัครนายก อบจ. จังหวัดอ่างทองในนามของคณะก้าวหน้า คือ โยธิน เปาอินทร์ . คุณโยธินมีความฝันอยากเห็นสังคมที่เท่าเทียม เขาต้องการลดระดับความเหลื่อมล้ำในสังคม หากเขาได้รับความไว้วางใจจากประชาชนในจังหวัดอ่างทอง คุณโยธินตั้งใจลงทุนสร้างศูนย์บริบาลผู้สูงอายุและผู้ป่วยติดเตียงในทุกอำเภอ และสร้างศูนย์ฟอกไตเพิ่มในจังหวัด . ครอบครัวที่มีผู้สูงอายุที่ช่วยเหลือตัวเองไม่ได้ ผู้ป่วยติดเตียง และผู้ป่วยไตเรื้อรัง มักเป็นครอบครัวที่มีความเครียดสูง การดูแลผู้ป่วยเหล่านี้ต้องใช้คนดูแลเต็มเวลา ไม่ว่าจะเพื่อป้อนอาหาร การพลิกตัว ทำความสะอาด หรือการพาไปฟอกไตสัปดาห์ละสองครั้ง แต่ละครั้งใช้เวลาแทบจะทั้งวันในการเดินทางและการรักษา . สมาชิกในครอบครัวอย่างน้อยหนึ่งคนต้องเสียโอกาสในการทำมาหากินเพื่อดูแลผู้ป่วย สมาชิกคนอื่นต้องแบกรับภาระทางเศรษฐกิจแทนผู้ป่วยและคนดูแล . สวัสดิการสาธารณสุขที่ไม่เพียงพอของภาครัฐทำให้ประชาชนต้องแบกรับปัญหาเหล่านี้ด้วยตัวเอง สำหรับครอบครัวที่มีรายได้น้อย หากมีผู้สูงอายุ ผู้ป่วยติดเตียง หรือผู้ป่วยไต เหมือนยิ่งถูกซ้ำเติมให้ยากจนลงอีก . ศูนย์บริบาลผู้ป่วยติดเตียงและผู้สูงอายุที่เราออกแบบไว้เป็นนโยบายที่ผู้สมัคร นายก อบจ. ของคณะก้าวหน้าหลายจังหวัดนำไปประยุกต์ใช้เป็นนโยบาย . ที่ จ.อ่างทอง คุณโยธินต้องการสร้างศูนย์บริบาลขนาด 20 เตียงทั้ง 7 อำเภอ อำเภอละแห่ง โดยใช้งบประมาณศูนย์ละ 25 ล้านในการก่อสร้าง ภายใต้งบประมาณที่จำกัด คุณโยธินวางแผนลงทุนไว้ปีละ 2 อำเภอ จะได้ครบ 7 ศูนย์ 7 อำเภอ ในเวลา 4 ปีของสมัยบริหารพอดี . ในศูนย์บริบาลนี้ มีบริการดูแลผู้ป่วยติดเตียงและผู้สูงอายุรายวัน และระยะสั้น บริการกายภาพบำบัด มีห้องสันทนาการและพื้นที่กิจกรรม เช่น หนังสือ หมากรุก ทีวี และวงสนทนา ในราคาที่ย่อมเยาและได้มาตรฐาน . จังหวัดอ่างทองเป็นจังหวัดที่มีสัดส่วนผู้สูงอายุต่อประชากรทั้งจังหวัดเยอะเป็นอันดับ 7 ของประเทศ (ดูภาพตารางประกอบ) การมีบริการเข่นนึ้จะช่วยลดภาระครอบครัวที่ลำบากได้ เช่น หากสมาชิกในครอบครัวต้องเดินทางไปค้าขายค้างคืนต่างจังหวัดก็สามารถนำผู้ป่วยมาฝากรับบริการที่ศูนย์ได้ . นอกจากนี้ คุณโยธินยังเห็นว่าในอ่างทองมีโรงเรียนขนาดเล็กที่ถูกยุบรวม แล้วอาคารถูกปล่อยให้ว่างเปล่าเป็นจำนวนหนึ่ง หากเราสามารถขอถ่ายโอนโรงเรียนเปล่านี้จากกระทรวงศึกษาธิการ แล้วมาตกแต่งใหม่เป็นศูนย์บริบาล ก็จะลดเงินลงทุนก่อสร้างได้อีก . อ่างทองมีงบประมาณ อบจ. ปีละประมาณ 350 ล้านบาท หนึ่งวาระหรือ 4 ปี ผู้บริหารมีงบประมาณ 1,400 ล้านบาท  . ผมเชื่อว่าหากงบประมาณจำนวนนี้ถูกนำมาใช้อย่างมีประสิทธิภาพ ไม่มีการโกงกิน คนอ่างทองต้องเห็นการเปลี่ยนแปลงในทางที่ดีขึ้นในจังหวัดอย่างแน่นอน . ขอเชิญประชาชนชาวอ่างทองไปใช้สิทธิเลือกตั้งท้องถิ่นครั้งแรกในรอบเกือบสิบปีในวันที่ 20 ธันวาคม 2563 ให้โอกาสคุณโยธินได้เข้าไปบริหาร อบจ. เพื่อสร้างอ่างทองให้ดีกว่านี้ . #เปลี่ยนประเทศไทยเริ่มได้ที่บ้านเรา')
-    print(it('Centrodestra nel caos, in un giorno segnato dallo scontro frontale tra Lega e Forza Italia: Matteo Salvini accusa gli azzurri di fare \'inciuci\' con il nemico e di pensare ai "rimpasti", Silvio Berlusconi, in serata, cerca di gettare acqua sul fuoco, ma invano. Prima parla di "presunte divergenze con forze alleate", poi però picchia duro ricordando alla coalizione che senza il suo partito in Italia ci sarebbe "una destra isolata e perdente" come il Front National francese.'))
+    print(it(
+        'Centrodestra nel caos, in un giorno segnato dallo scontro frontale tra Lega e Forza Italia: Matteo Salvini accusa gli azzurri di fare \'inciuci\' con il nemico e di pensare ai "rimpasti", Silvio Berlusconi, in serata, cerca di gettare acqua sul fuoco, ma invano. Prima parla di "presunte divergenze con forze alleate", poi però picchia duro ricordando alla coalizione che senza il suo partito in Italia ci sarebbe "una destra isolata e perdente" come il Front National francese.'))
