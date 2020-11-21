@@ -66,9 +66,8 @@ def en_con_to_cn_con_google(info, cn_info):
 
 
 def translated_cn(context, cn_info):
-    str = translate_zh(context,cn_info)
-    return str
-
+    translated = translate_zh(context,cn_info)
+    return translated
 
 def en_con_to_cn_con(tran_str, cn_info):
     global cn_content
