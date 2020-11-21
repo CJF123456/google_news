@@ -80,16 +80,16 @@ def en_con_to_cn_con(tran_str, cn_info):
         no_cn_contents = textwrap.wrap(tran_str, 4999)
     for no_cn_content in no_cn_contents:
         cn_contents.append(translated_cn(no_cn_content, cn_info))
-    cn_content = "".join(cn_contents).replace("\n\n\n", "</p><p>").replace("\n", "").strip()
+    cn_content = "".join(cn_contents).replace("\n\n\n", "</p><p>").replace("\n", "").strip().lstrip()
     if cn_content.startswith("<p>"):
-        cn_content = cn_content
+        cn_content = cn_content.strip().lstrip()
     else:
-        cn_content = "<p>" + cn_content
+        cn_content = "<p>" + cn_content.strip().lstrip()
     if cn_content.endswith("</p>"):
-        cn_content = cn_content
+        cn_content = cn_content.strip().lstrip()
     else:
         cn_content = cn_content + "</p>"
-    cn_content = cn_content.replace("\n", "").lstrip()
+    cn_content = cn_content.replace("\n", "").strip().lstrip()
     return cn_content
 
 
