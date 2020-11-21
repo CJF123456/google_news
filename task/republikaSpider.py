@@ -200,6 +200,8 @@ class RepublikaSpider(object):
         if "&amp;" in content_text:
             content_text.replace("&amp;", "&")
         content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
+        if "<p>. </p>" in content_text:
+            content_text = content_text.replace("<p>. </p>", "")
         return content_text
 
     # TODO 图片url

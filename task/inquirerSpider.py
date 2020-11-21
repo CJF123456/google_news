@@ -138,7 +138,7 @@ class InquirerSpider(object):
                         cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
                             replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
                                                                                                                "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>","</p>")
+                            "<p>  </p>", "").replace("<p>   </p>", "").replace("</p> <p>","</p><p>").replace("</ p>","</p>")
                         spider_time = now_datetime()
                         body = content_text
                         cn_title = cn_title
