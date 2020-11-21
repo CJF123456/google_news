@@ -73,7 +73,7 @@ class RepublikaSpider(object):
                     url_code = ""
                 try:
                     title = el.xpath('.//h2/a/text()')
-                    title = "".join(title)
+                    title = "".join(title).strip()
                 except Exception as e:
                     print(e)
                     title = ""
