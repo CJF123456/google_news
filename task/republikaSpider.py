@@ -176,7 +176,8 @@ class RepublikaSpider(object):
                                           self.project_name)
                     else:
                         pass
-
+        else:
+            pass
     # TODO 内容格式化
     def get_content_html(self, html):
         global con, con_html
