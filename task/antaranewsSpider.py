@@ -124,7 +124,7 @@ class AntaranewsSpider(object):
                     else:
                         cn_caption = ""
                     cn_content_ = en_con_to_cn_con(contents_html, 'id')
-                    if cn_content_:
+                    if cn_content_ and cn_title:
                         if image_url:
                             ii = get_image(image_url)
                             r_i = update_img(ii)
@@ -226,8 +226,10 @@ class AntaranewsSpider(object):
             content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
         if content_text:
             content_text = content_text.replace("<p><p>", "<p>"). \
-                replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "") \
-                .replace("<p></p>", "").replace("<p>  </p>", "").replace("<p>   </p>", "")
+                replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
+                "<p></p>",
+                "").replace(
+                "<p>  </p>", "").replace("<p>   </p>", "")
         else:
             content_text = ""
         return content_text
