@@ -10,6 +10,7 @@ from retry import retry
 from mylog.mlog import log
 from utils.get_ips import get_ip
 from utils.datautil import is_contain_chinese
+
 if sys.version_info[0] == 2:  # Python 2
     pass
 else:  # Python 3
@@ -115,10 +116,10 @@ def translate_zh(content, info_cn):
             for i in range(0, len(item[0])):
                 if str(item[0][i][0]) != "None":
                     translated += str(item[0][i][0])
-                    if is_contain_chinese(translated):
-                        translated = translated
-                    else:
-                        translated = ""
+            if is_contain_chinese(translated):
+                translated = translated
+            else:
+                translated = ""
         except Exception as e:
             time.sleep(1)
             translated = ""
@@ -127,7 +128,7 @@ def translate_zh(content, info_cn):
         num = num + 1
         if num >= 10:
             translated = ""
-            log.info("translator fail")
+            log.info("translated fail:" + str(num))
             time.sleep(1)
         break
     return translated
