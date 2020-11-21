@@ -134,11 +134,11 @@ class InquirerSpider(object):
                         content_text = content_text.replace("<p><p>", "<p>"). \
                             replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
                                                                                                                "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "")
+                            "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>","</p>")
                         cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
                             replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
                                                                                                                "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "")
+                            "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>","</p>")
                         spider_time = now_datetime()
                         body = content_text
                         cn_title = cn_title
@@ -182,11 +182,13 @@ class InquirerSpider(object):
             con_htmls = []
             for divcon in soup.select('div.gmail_quote'):
                 [s.extract() for s in divcon("script")]
+                [s.extract() for s in divcon("style")]
                 [s.extract() for s in divcon("div")]
                 [s.extract() for s in divcon("iframe")]
                 [s.extract() for s in divcon("<!-->")]
                 [s.extract() for s in divcon("h6")]
                 [s.extract() for s in divcon("i")]
+                [s.extract() for s in divcon.find_all("style", {"type": "text/css"})]
                 locu_content = divcon.prettify()
                 con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
                 con = self.filter_html_clear_format(con)
@@ -203,16 +205,20 @@ class InquirerSpider(object):
                 content_text = content_text.replace("&amp;", "&")
             if "<p>VIDEO</p>" in content_text:
                 content_text = content_text.split("<p>VIDEO")[0]
+            if "<p>—————" in content_text:
+                content_text=content_text.split("<p>—————")[0]
         else:
             soup = BeautifulSoup(html, 'lxml')
             con_htmls = []
             for divcon in soup.select('div#article_content>div'):
                 [s.extract() for s in divcon("script")]
+                [s.extract() for s in divcon("style")]
                 [s.extract() for s in divcon("iframe")]
                 [s.extract() for s in divcon("<!-->")]
                 [s.extract() for s in divcon("h6")]
                 [s.extract() for s in divcon("i")]
                 [s.extract() for s in divcon("div")]
+                [s.extract() for s in divcon.find_all("style", {"type": "text/css"})]
                 locu_content = divcon.prettify()
                 con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
                 con = self.filter_html_clear_format(con)
@@ -229,9 +235,11 @@ class InquirerSpider(object):
                 content_text = content_text.replace("&amp;", "&")
             if "<p>VIDEO</p>" in content_text:
                 content_text = content_text.split("<p>VIDEO")[0]
+            if "<p>—————" in content_text:
+                content_text=content_text.split("<p>—————")[0]
         content_text = content_text.replace("<p><p>", "<p>"). \
             replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
-            "<p>  </p>", "").replace("<p>   </p>", "")
+            "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>","</p>")
         return content_text
 
     # TODO 图片url
