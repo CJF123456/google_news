@@ -30,7 +30,7 @@ from utils.timeUtil import now_datetime, now_time, now_datetime_no
 class CnReutersSpider(object):
     def __init__(self):
         # 来源
-        self.mmd5 = 'google:cn_reuters1'
+        self.mmd5 = 'google:cn_reuters'
         self.project_name = self.__class__.__name__
         self.web_name = "路透中文网"
         self.first_url = "https://cn.reuters.com"
