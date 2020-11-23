@@ -99,12 +99,10 @@ class SmhSpider(object):
     def get_detail(self, title, detail_url, url_code, column_first, column_second, kw_site,
                    pc_headers, md5, source_id):
         global con_, content_text, cn_content_text
-        print(detail_url)
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         if st:
             html = etree.HTML(con)
             pub_time = self.get_pub_time(html)
-            log.info(pub_time + "=============================")
             pub_date_time = now_datetime_no()
             if pub_time < pub_date_time:
                 log.info("数据不是最新" + pub_time)
