@@ -93,7 +93,7 @@ class CnReutersSpider(object):
                                             url_code = ""
                                         try:
                                             title = el.xpath("./text()")
-                                            title = "".join(title)
+                                            title = "".join(title).strip()
                                         except Exception as e:
                                             print(e)
                                             title = ""
@@ -132,7 +132,7 @@ class CnReutersSpider(object):
                         url_code = ""
                     try:
                         title = el.xpath("./text()")
-                        title = "".join(title)
+                        title = "".join(title).strip()
                     except Exception as e:
                         print(e)
                         title = ""

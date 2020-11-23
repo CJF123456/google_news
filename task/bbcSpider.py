@@ -73,7 +73,7 @@ class BbcSpider(object):
                     url_code = ""
                 try:
                     title = el.xpath(".//div/h3/a/span/text()")
-                    title = "".join(title)
+                    title = "".join(title).strip()
                 except Exception as e:
                     print(e)
                     title = ""

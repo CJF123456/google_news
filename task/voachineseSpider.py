@@ -72,7 +72,7 @@ class VoachineseSpider(object):
                     url_code = ""
                 try:
                     title = el.xpath('./div["media-block"]/a/@title')
-                    title = "".join(title).lstrip().strip()
+                    title = "".join(title).strip()
                 except Exception as e:
                     print(e)
                     title = ""

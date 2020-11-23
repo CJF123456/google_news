@@ -75,7 +75,7 @@ class LtnSpider(object):
                         url_code = ""
                     try:
                         title = el.xpath('./a[1]/@title')
-                        title = "".join(title).lstrip().strip()
+                        title = "".join(title).strip()
                         title = "".join(cat_to_chs(title))
                     except Exception as e:
                         print(e)
@@ -107,7 +107,7 @@ class LtnSpider(object):
                         url_code = ""
                     try:
                         title = el.xpath('./a[@class="titlist"]/p/text()')
-                        title = "".join(title).lstrip().strip()
+                        title = "".join(title).strip()
                         title = "".join(cat_to_chs(title))
                     except Exception as e:
                         print(e)

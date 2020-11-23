@@ -74,7 +74,7 @@ class ScmpSpider(object):
                     url_code = ""
                 try:
                     title = el.xpath("./a/text()")
-                    title = "".join(title)
+                    title = "".join(title).strip()
                 except Exception as e:
                     print(e)
                     title = ""

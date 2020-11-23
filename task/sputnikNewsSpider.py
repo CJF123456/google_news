@@ -72,7 +72,7 @@ class SputnikNewsSpider(object):
                     url_code = ""
                 try:
                     title = el.xpath('.//div[@class="b-stories__title"]/h2/a/text()')
-                    title = "".join(title)
+                    title = "".join(title).strip()
                 except Exception as e:
                     print(e)
                     title = ""

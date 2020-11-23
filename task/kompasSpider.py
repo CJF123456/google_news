@@ -72,7 +72,7 @@ class KompasSpider(object):
                     url_code = ""
                 try:
                     title = el.xpath('./h3/a/text()')
-                    title = "".join(title).lstrip().strip()
+                    title = "".join(title).strip()
 
                 except Exception as e:
                     print(e)

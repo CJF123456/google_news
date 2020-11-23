@@ -19,6 +19,7 @@ from task.cron_start_task_g import parse_g
 
 
 # 13 12,15,17,18 * * * cd /spider/google_news/task; python3 cron_start_task.py >> /data/logs/google_news.log 2>&1
+#*/1 * * * * sleep 20 &&
 
 
 

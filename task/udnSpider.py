@@ -72,7 +72,7 @@ class UdnSpider(object):
                     url_code = ""
                 try:
                     title = el.xpath('./h2/a/@title')
-                    title = "".join(title).lstrip().strip()
+                    title = "".join(title).strip()
                     title = "".join(cat_to_chs(title))
                 except Exception as e:
                     print(e)
@@ -109,7 +109,7 @@ class UdnSpider(object):
                     url_code = ""
                 try:
                     title = el2.xpath('./h3/a/@title')
-                    title = "".join(title).lstrip().strip()
+                    title = "".join(title).strip()
                     title = "".join(cat_to_chs(title))
                 except Exception as e:
                     print(e)
