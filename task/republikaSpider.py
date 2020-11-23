@@ -73,7 +73,7 @@ class RepublikaSpider(object):
                     url_code = ""
                 try:
                     title = el.xpath('.//h2/a/text()')
-                    title = "".join(title).strip()
+                    title = "".join(title)
                 except Exception as e:
                     print(e)
                     title = ""
@@ -85,6 +85,7 @@ class RepublikaSpider(object):
                         log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
+                            #print(detail_url,title)
                             self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
                                             pc_headers, md5, source_id)
                 else:
@@ -108,6 +109,7 @@ class RepublikaSpider(object):
                 log.info("数据不是最新" + pub_time)
                 hset_md5_filter(md5, self.mmd5)
             else:
+                print(detail_url, title)
                 image_url = self.get_image_url(html)
                 caption = self.get_caption(html)
                 subhead = self.get_subhead(html)
@@ -178,6 +180,7 @@ class RepublikaSpider(object):
                         pass
         else:
             pass
+
     # TODO 内容格式化
     def get_content_html(self, html):
         global con, con_html
