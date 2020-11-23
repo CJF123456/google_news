@@ -138,7 +138,7 @@ class AljazeeraSpider(object):
                     pass
                 else:
                     cn_content_ = en_con_to_cn_con(content_, 'en')
-                    if cn_content_ and cn_title:
+                    if cn_content_ and cn_title and len(cn_content_) > len(content_) / 4:
                         if image_url:
                             image_url = self.first_url + image_url
                             ii = get_image(image_url)

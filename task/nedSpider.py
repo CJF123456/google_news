@@ -121,7 +121,7 @@ class NedSpider(object):
                 else:
                     cn_caption = ""
                 cn_content_ = en_con_to_cn_con(contents_html, 'en')
-                if cn_content_ and cn_title:
+                if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
                     if image_url:
                         ii = get_image(image_url)
                         r_i = update_img(ii)
