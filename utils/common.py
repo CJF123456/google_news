@@ -334,12 +334,14 @@ def data_insert_mssql(info_val, sql, md5, mmd5, project_name):
             mysql.update(sql, info_val)
             hset_md5_filter(md5, mmd5)
         except Exception as e:
-            log.info(e)
-            txt = ' data insert fail ,please check project'
-            mail_title = project_name + txt
-            mail_body = mail_title + " Please check it. weather no Included."
-            log.error(mail_title)
-            log.error(info_val)
+            erro_text = e
+            if "Violation of UNIQUE KEY" in erro_text:
+                hset_md5_filter(md5, mmd5)
+            else:
+                txt = ' data insert fail ,please check project'
+                mail_title = project_name + txt
+                mail_body = mail_title + " Please check it. weather no Included."
+                log.error(mail_title)
             # send_mail_to(mail_title, mail_body
     else:
         try:
@@ -347,11 +349,14 @@ def data_insert_mssql(info_val, sql, md5, mmd5, project_name):
             mysql.update(sql, info_val)
             hset_md5_filter(md5, mmd5)
         except Exception as e:
-            log.info(e)
-            txt = ' data insert fail ,please check project'
-            mail_title = project_name + txt
-            mail_body = mail_title + " Please check it. weather no Included."
-            log.error(mail_title)
+            erro_text = e
+            if "Violation of UNIQUE KEY" in erro_text:
+                hset_md5_filter(md5, mmd5)
+            else:
+                txt = ' data insert fail ,please check project'
+                mail_title = project_name + txt
+                mail_body = mail_title + " Please check it. weather no Included."
+                log.error(mail_title)
             # log.error(info_val)
             # send_mail_to(mail_title, mail_body
 
