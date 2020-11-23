@@ -17,7 +17,7 @@ import time
 from bs4 import BeautifulSoup
 from lxml import etree
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import all_tag_replace_html, format_content_p, get_month_en
@@ -78,23 +78,24 @@ class NedSpider(object):
                 except Exception as e:
                     print(e)
                     title = ""
-                pub_time = self.get_pub_time(el,column_first)
-                pub_date_time = now_datetime_no()
-                if pub_time < pub_date_time:
-                    log.info("数据不是最新" + pub_time)
-                else:
-                    if url_code:
-                        detail_url = url_code
-                        md5_ = detail_url
-                        md5 = make_md5(md5_)
+                if url_code:
+                    detail_url = url_code
+                    md5_ = detail_url
+                    md5 = make_md5(md5_)
+                    pub_time = self.get_pub_time(el, column_first)
+                    pub_date_time = now_datetime_no()
+                    if pub_time < pub_date_time:
+                        log.info("数据不是最新" + pub_time)
+                        hset_md5_filter(md5, self.mmd5)
+                    else:
                         if hexists_md5_filter(md5, self.mmd5):
                             log.info(self.project_name + " info data already exists!")
                         else:
                             if detail_url:
-                                self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
-                                                pc_headers, md5, source_id,pub_time)
-                    else:
-                        pass
+                                    self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
+                                                    pc_headers, md5, source_id,pub_time)
+                else:
+                    pass
 
     def cn_replace_html(self, format_info):
         if format_info:
