@@ -62,6 +62,7 @@ class DwNewsSpider(object):
                     items = json_data.get('items')
                     for item in items:
                         title = item.get('data')['title']
+                        detail_url = item.get('data').get('canonicalUrl')
                         # 发布时间
                         publish_time = item.get('data').get('publishTime')
                         pub_time = timestamp_to_str(publish_time)
@@ -73,7 +74,6 @@ class DwNewsSpider(object):
                             hset_md5_filter(md5, self.mmd5)
                         else:
                             # 详情页url
-                            detail_url = item.get('data').get('canonicalUrl')
                             detail_url_code = str(format_info_int_re(detail_url))
                             if hexists_md5_filter(md5, self.mmd5):
                                 log.info(self.project_name + " info data already exists!")

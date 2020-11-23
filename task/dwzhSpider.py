@@ -108,7 +108,7 @@ class DwzhSpider(object):
         if st:
             html = etree.HTML(con)
             pub_time=self.get_pub_time(html)
-            pub_date_time = now_datetime_no() + "00:00:00"
+            pub_date_time = now_datetime_no()
             if pub_time < pub_date_time:
                 log.info("数据不是最新" + pub_time)
             else:
