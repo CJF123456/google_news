@@ -17,7 +17,7 @@ from lxml import etree
 from utils.ossUtil import get_image, update_img
 from configs import useragents
 from configs.dbconfig import NewsTaskSql
-from filters.hashFilter import make_md5, hexists_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import filter_html_clear_format, format_content_p, \
@@ -77,21 +77,16 @@ class UdnSpider(object):
                 except Exception as e:
                     print(e)
                     title = ""
-                try:
-                    pub_time_el = el.xpath('.//time[@class="story-list__time"]/text()')
-                    pub_el = "".join(pub_time_el)
-                    pub_time = pub_el + ":00"
-                except Exception as e:
-                    print(e)
-                    pub_time = now_datetime()
-                pub_date_time = now_datetime_no()
-                if pub_time < pub_date_time:
-                    log.info("数据不是最新" + pub_time)
                 else:
                     if url_code and title:
                         detail_url = self.first_url + url_code
                         md5_ =detail_url
                         md5 = make_md5(md5_)
+                        pub_time = self.get_pub_time(el)
+                        pub_date_time = now_datetime_no()
+                        if pub_time < pub_date_time:
+                            log.info("数据不是最新" + pub_time)
+                            hset_md5_filter(md5, self.mmd5)
                         if hexists_md5_filter(md5, self.mmd5):
                             log.info(self.project_name + " info data already exists!")
                         else:
@@ -114,13 +109,7 @@ class UdnSpider(object):
                 except Exception as e:
                     print(e)
                     title = ""
-                try:
-                    pub_time_el = el2.xpath('.//time[@class="story-list__time"]/text()')
-                    pub_el = "".join(pub_time_el)
-                    pub_time = pub_el + ":00"
-                except Exception as e:
-                    print(e)
-                    pub_time = now_datetime()
+                pub_time = self.get_pub_time(el2)
                 pub_date_time = now_datetime_no()
                 if pub_time < pub_date_time:
                     log.info("数据不是最新" + pub_time)
@@ -137,6 +126,16 @@ class UdnSpider(object):
                                                 pc_headers, md5, pub_time, source_id)
                     else:
                         pass
+
+    def get_pub_time(self, el):
+        try:
+            pub_time_el = el.xpath('.//time[@class="story-list__time"]/text()')
+            pub_el = "".join(pub_time_el)
+            pub_time = pub_el + ":00"
+        except Exception as e:
+            print(e)
+            pub_time = now_datetime()
+        return pub_time
 
     def cn_replace_html(self, format_info):
         if format_info:
