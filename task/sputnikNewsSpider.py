@@ -17,7 +17,7 @@ from lxml import etree
 from utils.ossUtil import get_image, update_img
 from configs import useragents
 from configs.dbconfig import NewsTaskSql
-from filters.hashFilter import make_md5, hexists_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import format_info_list_str, filter_html_clear_format, format_content_p, \
@@ -111,65 +111,72 @@ class SputnikNewsSpider(object):
         content = self.get_content_html(con)
         if st:
             html = etree.HTML(con)
-            try:
-                pub_time_el = html.xpath('//div[@class="b-article__refs-credits"]/time[1]/@datetime')
-                pub_time_ = format_info_list_str(pub_time_el)
-                date_ = pub_time_.split("T")[0]
-                time_ = pub_time_.split("T")[1]
-                pub_time = date_ + " " + time_ + ":00"
-                pub_time = format_string_datetime(pub_time)
-            except Exception as e:
-                print(e)
-                pub_time = now_datetime()
+            pub_time=self.get_pub_time(html)
             pub_date_time = now_datetime_no()
-            # if pub_time < pub_date_time:
-            #     log.info("数据不是最新" + pub_time)
-            # else:
-            if not content:
-                pass
+            if pub_time < pub_date_time:
+                log.info("数据不是最新" + pub_time)
+                hset_md5_filter(md5, self.mmd5)
             else:
-                if image_url:
-                    caption = ""
-                    ii = get_image(image_url)
-                    r_i = update_img(ii)
-                    img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                    content_text = img_ + content.lstrip().strip()
-                    content_text = content_text.replace("<p><img", "<img")
+                if not content:
+                    pass
                 else:
-                    content_text = content
-                content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
-                spider_time = now_datetime()
-                # 采集时间
-                body = content_text
-                cn_title = title
-                create_time = spider_time
-                group_name = column_first
-                update_time = spider_time
-                website = detail_url
-                Uri = detail_url
-                Language = "zh"
-                DocTime = pub_time
-                CrawlTime = spider_time
-                Hidden = 0  # 去确认
-                file_name = ""
-                file_path = ""
-                classification = ""
-                cn_boty = ''
-                column_id = ''
-                creator = 0
-                if_top = 0
-                source_id = source_id
-                summary = ''
-                UriId = ''
-                keyword = ''
-                info_val = (
-                    body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
-                    keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                    CrawlTime,
-                    Hidden, file_name, file_path)
-                # 入库mssql
-                data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                  self.project_name)
+                    if image_url:
+                        caption = ""
+                        ii = get_image(image_url)
+                        r_i = update_img(ii)
+                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                        content_text = img_ + content.lstrip().strip()
+                        content_text = content_text.replace("<p><img", "<img")
+                    else:
+                        content_text = content
+                    content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
+                    spider_time = now_datetime()
+                    # 采集时间
+                    body = content_text
+                    cn_title = title
+                    create_time = spider_time
+                    group_name = column_first
+                    update_time = spider_time
+                    website = detail_url
+                    Uri = detail_url
+                    Language = "zh"
+                    DocTime = pub_time
+                    CrawlTime = spider_time
+                    Hidden = 0  # 去确认
+                    file_name = ""
+                    file_path = ""
+                    classification = ""
+                    cn_boty = ''
+                    column_id = ''
+                    creator = 0
+                    if_top = 0
+                    source_id = source_id
+                    summary = ''
+                    UriId = ''
+                    keyword = ''
+                    info_val = (
+                        body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
+                        keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                        CrawlTime,
+                        Hidden, file_name, file_path)
+                    # 入库mssql
+                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                      self.project_name)
+        else:
+            pass
+
+    def get_pub_time(self, html):
+        global pub_time
+        try:
+            pub_time_el = html.xpath('//div[@class="b-article__refs-credits"]/time[1]/@datetime')
+            pub_time_ = format_info_list_str(pub_time_el)
+            date_ = pub_time_.split("T")[0]
+            time_ = pub_time_.split("T")[1]
+            pub_time = date_ + " " + time_ + ":00"
+        except Exception as e:
+            print(e)
+            pub_time = now_datetime()
+        return pub_time
 
     # TODO 内容格式化
     def get_content_html(self, html):
