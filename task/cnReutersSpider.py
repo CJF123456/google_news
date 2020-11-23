@@ -18,19 +18,19 @@ from configs.dbconfig import NewsTaskSql
 from lxml import etree
 from utils.ossUtil import get_image, update_img
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import filter_emoji, format_info_list_str, filter_html_clear_format, \
     all_tag_replace_html, format_content_p
-from utils.timeUtil import now_datetime, now_time
+from utils.timeUtil import now_datetime, now_time, now_datetime_no
 
 
 # 路透中文网 en
 class CnReutersSpider(object):
     def __init__(self):
         # 来源
-        self.mmd5 = 'google:cn_reuters'
+        self.mmd5 = 'google:cn_reuters1'
         self.project_name = self.__class__.__name__
         self.web_name = "路透中文网"
         self.first_url = "https://cn.reuters.com"
@@ -190,81 +190,82 @@ class CnReutersSpider(object):
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         cdnUrl = self.get_image_url(con)
         pub_time = self.get_pub_time(con)
-        # pub_date_time = now_datetime_no()
-        # if pub_time < pub_date_time:
-        #     log.info("数据不是最新" + pub_time)
-        # else:
-        if st:
-            html = etree.HTML(con)
-            try:
-                image_text = html.xpath(
-                    '//article//button[@aria-label="image"]/figure//div[@role="img"][1]/@aria-label')
-                caption = ''.join(image_text)
-            except Exception as e:
-                print(e)
-                caption = ""
-            content = self.get_content_html(con)
-            if not content:
-                pass
-            else:
-                if caption and cdnUrl:
-                    ii = get_image(cdnUrl)
-                    r_i = update_img(ii)
-                    img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                    content_text = img_ + content
-                    content_text = self.format_repalce_space(content_text)
-                    content_text = content_text.replace("<p><img", "<img")
-                else:
-                    content_text = content
-                    content_text = self.format_repalce_space(content_text)
-            content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
-                                                                                                     "").replace(
-                "<p>=</p>", "").replace("<p></p>", "")
-            spider_time = now_datetime()
-            # 采集时间
-            body = content_text
-            cn_title = title
-            create_time = spider_time
-            group_name = column_first
-            title = title
-            title = filter_emoji(title)
-            update_time = spider_time
-            website = detail_url
-            Uri = detail_url
-            Language = "zh"
-            DocTime = pub_time
-            CrawlTime = spider_time
-            Hidden = 0  # 去确认
-            file_name = ""
-            file_path = ""
-            classification = ""
-            cn_boty = ""
-            column_id = ''
-            creator = 0
-            if_top = 0
-            source_id = source_id
-            summary = ''
-            UriId = ''
-            keyword = ''
-            info_val = (
-                body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
-                keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                CrawlTime,
-                Hidden, file_name, file_path)
-            # 入库mssql
-            data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                              self.project_name)
+        pub_date_time = now_datetime_no()
+        if pub_time < pub_date_time:
+            log.info("数据不是最新" + pub_time)
+            hset_md5_filter(md5, self.mmd5)
         else:
-            pass
+            if st:
+                html = etree.HTML(con)
+                try:
+                    image_text = html.xpath(
+                        '//article//button[@aria-label="image"]/figure//div[@role="img"][1]/@aria-label')
+                    caption = ''.join(image_text)
+                except Exception as e:
+                    print(e)
+                    caption = ""
+                content = self.get_content_html(con)
+                if not content:
+                    pass
+                else:
+                    if caption and cdnUrl:
+                        ii = get_image(cdnUrl)
+                        r_i = update_img(ii)
+                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                        content_text = img_ + content
+                        content_text = self.format_repalce_space(content_text)
+                        content_text = content_text.replace("<p><img", "<img")
+                    else:
+                        content_text = content
+                        content_text = self.format_repalce_space(content_text)
+                content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
+                                                                                                         "").replace(
+                    "<p>=</p>", "").replace("<p></p>", "")
+                spider_time = now_datetime()
+                # 采集时间
+                body = content_text
+                cn_title = title
+                create_time = spider_time
+                group_name = column_first
+                title = title
+                title = filter_emoji(title)
+                update_time = spider_time
+                website = detail_url
+                Uri = detail_url
+                Language = "zh"
+                DocTime = pub_time
+                CrawlTime = spider_time
+                Hidden = 0  # 去确认
+                file_name = ""
+                file_path = ""
+                classification = ""
+                cn_boty = ""
+                column_id = ''
+                creator = 0
+                if_top = 0
+                source_id = source_id
+                summary = ''
+                UriId = ''
+                keyword = ''
+                info_val = (
+                    body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
+                    keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                    CrawlTime,
+                    Hidden, file_name, file_path)
+                # 入库mssql
+                data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                  self.project_name)
+            else:
+                pass
 
     def get_pub_time(self, con):
         try:
             mat = re.search(r"(\d{4}-\d{1,2}-\d{1,2})", con)
             pub_time = mat.groups()[0] + " " + now_time()
-            from utils.timeUtil import format_string_datetime
-            pub_time = format_string_datetime(pub_time)
+            # from utils.timeUtil import format_string_datetime
+            # pub_time = format_string_datetime(pub_time)
         except Exception as e:
-            pub_time=now_datetime()
+            pub_time = now_datetime()
         return pub_time
 
     def get_content_html(self, html):
@@ -291,12 +292,10 @@ class CnReutersSpider(object):
             content_text = ""
         return content_text
 
-
     def format_repalce_space(self, format_info):
         if "<p><p>" in format_info:
             format_info = format_info.replace("<p><p>", "<p>")
         return format_info
-
 
     def get_image_url(self, con):
         image_el = con.split('<script type="application/ld+json">')[1].split("</script>")[0]

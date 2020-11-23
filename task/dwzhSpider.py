@@ -17,7 +17,7 @@ import time
 from lxml import etree
 from configs import useragents
 from bs4 import BeautifulSoup
-from filters.hashFilter import make_md5, hexists_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import format_content_p, \
@@ -111,6 +111,7 @@ class DwzhSpider(object):
             pub_date_time = now_datetime_no()
             if pub_time < pub_date_time:
                 log.info("数据不是最新" + pub_time)
+                hset_md5_filter(md5, self.mmd5)
             else:
                 try:
                     img_text = html.xpath('//div[@class="picBox full"]/p/text()')
@@ -176,7 +177,6 @@ class DwzhSpider(object):
             pub_time = pub_year_ + "-" + pub_date_ + "-" + pub_time_ + " " + now_time()
             if "\n" in pub_time:
                 pub_time = pub_time.replace("\n", "")
-            pub_time = format_string_datetime(pub_time)
         except Exception as e:
             print(e)
             pub_time = now_datetime()
