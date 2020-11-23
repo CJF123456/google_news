@@ -19,7 +19,7 @@ from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import filter_html_clear_format, format_content_p, \
-    all_tag_replace_html, get_month_en
+    all_tag_replace_html
 from utils.timeUtil import now_datetime, now_datetime_no
 from utils.translate import cat_to_chs, translated_cn, en_con_to_cn_con
 from configs.dbconfig import NewsTaskSql
@@ -79,7 +79,7 @@ class SmhSpider(object):
                     title = ""
                 if url_code and title:
                     detail_url = self.first_url + url_code
-                    md5_ = title+kw_site
+                    md5_ = title + kw_site
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         log.info(self.project_name + " info data already exists!")
@@ -99,11 +99,12 @@ class SmhSpider(object):
     def get_detail(self, title, detail_url, url_code, column_first, column_second, kw_site,
                    pc_headers, md5, source_id):
         global con_, content_text, cn_content_text
+        print(detail_url)
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         if st:
             html = etree.HTML(con)
             pub_time = self.get_pub_time(html)
-            log.info(pub_time+"=============================")
+            log.info(pub_time + "=============================")
             pub_date_time = now_datetime_no()
             if pub_time < pub_date_time:
                 log.info("数据不是最新" + pub_time)
@@ -212,18 +213,21 @@ class SmhSpider(object):
         return caption
 
     def get_pub_time(self, html):
-        global pub_el, pub_time_
+        global pub_el, pub_time_, pub_time
         try:
-            pub_time_el = html.xpath('.//time/text()')
+            pub_time_el = html.xpath('.//time/@datetime')
             pub_el = "".join(pub_time_el)
-            pub_time_ = pub_el.split("—")[0].strip()
-            hour_mis_ = pub_el.split("—")[1].strip()
-            hour_mis = self.get_hour_mis(hour_mis_)
-            month_ = pub_time_.split(" ")[0]
-            year_ = pub_time_.split(" ")[2]
-            day_ = pub_time_.split(" ")[1].replace(",", "")
-            month = get_month_en(month_)
-            pub_time = year_ + "-" + month + "-" + day_ + " " + hour_mis + ":00"
+            if "T" in pub_el and "+" in pub_el:
+                pub_time = pub_el.split("+")[0].replace("T", " ")
+            # pub_time_ = pub_el.split("—")[0].strip()
+            # hour_mis_ = pub_el.split("—")[1].strip()
+            # hour_mis = self.get_hour_mis(hour_mis_)
+            # month_ = pub_time_.split(" ")[0]
+            # year_ = pub_time_.split(" ")[2]
+            # day_ = pub_time_.split(" ")[1].replace(",", "")
+            # month = get_month_en(month_)
+            # pub_time = year_ + "-" + month + "-" + day_ + " " + hour_mis + ":00"
+            # pub_time=pub_time.replace(".",":").replace(", ",":")
         except Exception  as e:
             print(e)
             pub_time = now_datetime()
