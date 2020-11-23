@@ -103,6 +103,7 @@ class SmhSpider(object):
         if st:
             html = etree.HTML(con)
             pub_time = self.get_pub_time(html)
+            log.info(pub_time+"=============================")
             pub_date_time = now_datetime_no()
             if pub_time < pub_date_time:
                 log.info("数据不是最新" + pub_time)
@@ -120,7 +121,7 @@ class SmhSpider(object):
                     else:
                         cn_caption = ""
                     cn_content_ = en_con_to_cn_con(contents_html, 'en')
-                    if cn_content_:
+                    if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
                         if image_url:
                             ii = get_image(image_url)
                             r_i = update_img(ii)

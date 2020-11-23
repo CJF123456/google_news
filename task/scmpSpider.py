@@ -81,7 +81,7 @@ class ScmpSpider(object):
                 if url_code and title:
                     detail_url = self.first_url + url_code
                     detail_url_code = url_code
-                    md5_ = detail_url_code
+                    md5_ = detail_url
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
 

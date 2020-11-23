@@ -77,7 +77,7 @@ class ThejakartaSpider(object):
                     title = ""
                 if url_code and title:
                     detail_url = url_code
-                    md5_ = title+kw_site
+                    md5_ =detail_url
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         log.info(self.project_name + " info data already exists!")
@@ -104,7 +104,7 @@ class ThejakartaSpider(object):
                     title2 = ""
                 if url_code2 and title2:
                     detail_url2 = url_code2
-                    md5_2 = title2 + kw_site
+                    md5_2 = detail_url2
                     md52 = make_md5(md5_2)
                     if hexists_md5_filter(md52, self.mmd5):
                         log.info(self.project_name + " info data already exists!")
@@ -149,7 +149,7 @@ class ThejakartaSpider(object):
                         else:
                             cn_caption = ""
                         cn_content_ = en_con_to_cn_con(contents_html, 'en')
-                        if cn_content_ and cn_title:
+                        if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
                             if image_url:
                                 ii = get_image(image_url)
                                 r_i = update_img(ii)

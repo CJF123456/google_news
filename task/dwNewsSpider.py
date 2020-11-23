@@ -66,7 +66,7 @@ class DwNewsSpider(object):
                         publish_time = item.get('data').get('publishTime')
                         pub_time = timestamp_to_str(publish_time)
                         pub_date_time = now_datetime_no()
-                        md5_ = title + kw_site
+                        md5_ = detail_url
                         md5 = make_md5(md5_)
                         if pub_time < pub_date_time:
                             log.info("数据不是最新" + pub_time)

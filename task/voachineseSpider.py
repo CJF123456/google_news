@@ -94,7 +94,7 @@ class VoachineseSpider(object):
                                 detail_url = url_code
                             else:
                                 detail_url = self.first_url + url_code
-                            md5_ = title + kw_site
+                            md5_ = detail_url
                             md5 = make_md5(md5_)
                             if hexists_md5_filter(md5, self.mmd5):
                                 log.info(self.project_name + " info data already exists!")

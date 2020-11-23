@@ -22,7 +22,7 @@ from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import format_content_p, \
     all_tag_replace_html
-from utils.timeUtil import now_datetime, now_time, format_string_datetime
+from utils.timeUtil import now_datetime, now_time, format_string_datetime, now_datetime_no
 from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import get_image, update_img
 
@@ -81,7 +81,7 @@ class DwzhSpider(object):
                     title = ""
                 if url_code and title:
                     detail_url = self.first_url + url_code
-                    md5_ = title + kw_site
+                    md5_ = detail_url
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         log.info(self.project_name + " info data already exists!")
@@ -107,63 +107,63 @@ class DwzhSpider(object):
         image_url = self.get_image_url(con)
         if st:
             html = etree.HTML(con)
-            self.get_pub_time(html)
-            # pub_date_time = now_datetime_no() + "00:00:00"
-            # if pub_time < pub_date_time:
-            #     log.info("数据不是最新" + pub_time)
-            # else:
-            try:
-                img_text = html.xpath('//div[@class="picBox full"]/p/text()')
-                caption = "".join(img_text)
-            except Exception as e:
-                print(e)
-                caption = ""
-            content = self.get_content_html(con)
-            if not content:
-                pass
+            pub_time=self.get_pub_time(html)
+            pub_date_time = now_datetime_no() + "00:00:00"
+            if pub_time < pub_date_time:
+                log.info("数据不是最新" + pub_time)
             else:
-                if image_url and caption:
-                    ii = get_image(image_url)
-                    r_i = update_img(ii)
-                    img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                    content_text = img_ + content
-                    content_text = content_text.replace("<p><img", "<img")
+                try:
+                    img_text = html.xpath('//div[@class="picBox full"]/p/text()')
+                    caption = "".join(img_text)
+                except Exception as e:
+                    print(e)
+                    caption = ""
+                content = self.get_content_html(con)
+                if not content:
+                    pass
                 else:
-                    content_text = content
-                content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
-                                                                                                         "").replace(
-                    "<p><p>", "<p>").replace("</p></p>", "</p>")
-                spider_time = now_datetime()
-                body = content_text
-                cn_title = title
-                create_time = spider_time
-                group_name = column_first
-                update_time = spider_time
-                website = detail_url
-                Uri = detail_url
-                Language = "zh"
-                DocTime = pub_time
-                CrawlTime = spider_time
-                Hidden = 0  # 去确认
-                file_name = ""
-                file_path = ""
-                classification = ""
-                cn_boty = ""
-                column_id = ''
-                creator = 0
-                if_top = 0
-                source_id = soucre_id
-                summary = ''
-                UriId = ''
-                keyword = ''
-                info_val = (
-                    body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
-                    keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                    CrawlTime,
-                    Hidden, file_name, file_path)
-                # 入库mssql
-                data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                  self.project_name)
+                    if image_url and caption:
+                        ii = get_image(image_url)
+                        r_i = update_img(ii)
+                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                        content_text = img_ + content
+                        content_text = content_text.replace("<p><img", "<img")
+                    else:
+                        content_text = content
+                    content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
+                                                                                                             "").replace(
+                        "<p><p>", "<p>").replace("</p></p>", "</p>")
+                    spider_time = now_datetime()
+                    body = content_text
+                    cn_title = title
+                    create_time = spider_time
+                    group_name = column_first
+                    update_time = spider_time
+                    website = detail_url
+                    Uri = detail_url
+                    Language = "zh"
+                    DocTime = pub_time
+                    CrawlTime = spider_time
+                    Hidden = 0  # 去确认
+                    file_name = ""
+                    file_path = ""
+                    classification = ""
+                    cn_boty = ""
+                    column_id = ''
+                    creator = 0
+                    if_top = 0
+                    source_id = soucre_id
+                    summary = ''
+                    UriId = ''
+                    keyword = ''
+                    info_val = (
+                        body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
+                        keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                        CrawlTime,
+                        Hidden, file_name, file_path)
+                    # 入库mssql
+                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                      self.project_name)
 
     def get_pub_time(self, html):
         global pub_time

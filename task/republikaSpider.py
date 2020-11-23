@@ -79,7 +79,7 @@ class RepublikaSpider(object):
                     title = ""
                 if url_code and title:
                     detail_url = url_code
-                    md5_ = title + kw_site
+                    md5_ = detail_url
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         log.info(self.project_name + " info data already exists!")
@@ -139,9 +139,7 @@ class RepublikaSpider(object):
                             "<p>  </p>", "").replace("<p>   </p>", "")
                         cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
                             replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                            "<p></p>",
-                            "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "")
+                            "<p></p>","").replace("<p>  </p>", "").replace("<p>   </p>", "")
                         spider_time = now_datetime()
                         body = content_text
                         cn_title = cn_title
