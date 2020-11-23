@@ -7,6 +7,8 @@
 # @Software: PyCharm
 import sys
 
+
+
 sys.path.append('..')
 from task.cnReutersSpider import CnReutersSpider
 from task.dwNewsSpider import DwNewsSpider
@@ -30,15 +32,17 @@ from mylog.mlog import log
 from utils.timeUtil import now_datetime
 from task.aljazeeraSpider import AljazeeraSpider
 
+from task.ansaSpider import AnsaSpider
+
 '''
     定时
 '''
 
 
 def parse_it():
-    pass
+    #pass
     # anse
-    # AnsaSpider().parse()
+    AnsaSpider().parse()
 
 
 def parse_id():
