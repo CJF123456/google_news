@@ -85,7 +85,6 @@ class RepublikaSpider(object):
                         log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
-                            #print(detail_url,title)
                             self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
                                             pc_headers, md5, source_id)
                 else:
@@ -109,7 +108,6 @@ class RepublikaSpider(object):
                 log.info("数据不是最新" + pub_time)
                 hset_md5_filter(md5, self.mmd5)
             else:
-                print(detail_url, title)
                 image_url = self.get_image_url(html)
                 caption = self.get_caption(html)
                 subhead = self.get_subhead(html)
@@ -123,7 +121,7 @@ class RepublikaSpider(object):
                     else:
                         cn_caption = ""
                     cn_content_ = en_con_to_cn_con(contents_html, 'id')
-                    if cn_content_ and cn_title:
+                    if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
                         if image_url:
                             ii = get_image(image_url)
                             r_i = update_img(ii)
