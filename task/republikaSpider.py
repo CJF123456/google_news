@@ -180,6 +180,8 @@ class RepublikaSpider(object):
                                               self.project_name)
                         else:
                             pass
+            else:
+                log.info('title spider fail.')
         else:
             pass
 
