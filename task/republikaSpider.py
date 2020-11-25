@@ -85,8 +85,11 @@ class RepublikaSpider(object):
                         log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
-                            self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
-                                            pc_headers, md5, source_id)
+                            if detail_url.startswith("https://republika.co.id/berita/"):
+                                self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
+                                                pc_headers, md5, source_id)
+                            else:
+                                log.info("此文章不符合规范")
                 else:
                     pass
 
