@@ -96,84 +96,90 @@ class RepublikaSpider(object):
                 "<em>", "").replace("</em>", "").replace("<p></p>", "")
         return format_info
 
-    def get_detail(self, title, detail_url, url_code, column_first, column_second, kw_site,
+    def get_detail(self, title__, detail_url, url_code, column_first, column_second, kw_site,
                    pc_headers, md5, source_id):
         global con_, content_text, cn_content_text
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         if st:
             html = etree.HTML(con)
-            pub_time = self.get_pub_time(html)
-            pub_date_time = now_datetime_no()
-            if pub_time < pub_date_time:
-                log.info("数据不是最新" + pub_time)
-                hset_md5_filter(md5, self.mmd5)
-            else:
-                image_url = self.get_image_url(html)
-                caption = self.get_caption(html)
-                subhead = self.get_subhead(html)
-                contents_html = subhead + self.get_content_html(con)
-                cn_title = translated_cn(title, 'id')
-                if not contents_html:
-                    pass
+            title_ = self.get_title(html)
+            if title_ and title__:
+                if title__ in title_:
+                    title = title__
                 else:
-                    if caption:
-                        cn_caption = translated_cn(caption, 'id')
-                    else:
-                        cn_caption = ""
-                    cn_content_ = en_con_to_cn_con(contents_html, 'id')
-                    if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
-                        if image_url:
-                            ii = get_image(image_url)
-                            r_i = update_img(ii)
-                            img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                            content_text = img_ + contents_html
-                            cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
-                            cn_content_text = cn_img_ + cn_content_
-                        else:
-                            content_text = contents_html
-                            cn_content_text = cn_content_
-                        content_text = content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                            "<p></p>",
-                            "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "")
-                        cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                            "<p></p>","").replace("<p>  </p>", "").replace("<p>   </p>", "")
-                        spider_time = now_datetime()
-                        body = content_text
-                        cn_title = cn_title
-                        create_time = spider_time
-                        group_name = column_first
-                        update_time = spider_time
-                        website = detail_url
-                        Uri = detail_url
-                        Language = "zh"
-                        DocTime = pub_time
-                        CrawlTime = spider_time
-                        Hidden = 0  # 去确认
-                        file_name = ""
-                        file_path = ""
-                        classification = ""
-                        cn_boty = cn_content_text
-                        column_id = ''
-                        creator = 0
-                        if_top = 0
-                        source_id = source_id
-                        summary = ''
-                        UriId = ''
-                        keyword = ''
-                        info_val = (
-                            body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
-                            if_top,
-                            keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                            CrawlTime,
-                            Hidden, file_name, file_path)
-                        # 入库mssql
-                        data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                          self.project_name)
-                    else:
+                    title = title_
+                pub_time = self.get_pub_time(html)
+                pub_date_time = now_datetime_no()
+                if pub_time < pub_date_time:
+                    log.info("数据不是最新" + pub_time)
+                    hset_md5_filter(md5, self.mmd5)
+                else:
+                    image_url = self.get_image_url(html)
+                    caption = self.get_caption(html)
+                    subhead = self.get_subhead(html)
+                    contents_html = subhead + self.get_content_html(con)
+                    cn_title = translated_cn(title, 'id')
+                    if not contents_html:
                         pass
+                    else:
+                        if caption:
+                            cn_caption = translated_cn(caption, 'id')
+                        else:
+                            cn_caption = ""
+                        cn_content_ = en_con_to_cn_con(contents_html, 'id')
+                        if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
+                            if image_url:
+                                ii = get_image(image_url)
+                                r_i = update_img(ii)
+                                img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                                content_text = img_ + contents_html
+                                cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
+                                cn_content_text = cn_img_ + cn_content_
+                            else:
+                                content_text = contents_html
+                                cn_content_text = cn_content_
+                            content_text = content_text.replace("<p><p>", "<p>"). \
+                                replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
+                                "<p></p>",
+                                "").replace(
+                                "<p>  </p>", "").replace("<p>   </p>", "")
+                            cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
+                                replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
+                                "<p></p>", "").replace("<p>  </p>", "").replace("<p>   </p>", "")
+                            spider_time = now_datetime()
+                            body = content_text
+                            cn_title = cn_title
+                            create_time = spider_time
+                            group_name = column_first
+                            update_time = spider_time
+                            website = detail_url
+                            Uri = detail_url
+                            Language = "zh"
+                            DocTime = pub_time
+                            CrawlTime = spider_time
+                            Hidden = 0  # 去确认
+                            file_name = ""
+                            file_path = ""
+                            classification = ""
+                            cn_boty = cn_content_text
+                            column_id = ''
+                            creator = 0
+                            if_top = 0
+                            source_id = source_id
+                            summary = ''
+                            UriId = ''
+                            keyword = ''
+                            info_val = (
+                                body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
+                                if_top,
+                                keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                                CrawlTime,
+                                Hidden, file_name, file_path)
+                            # 入库mssql
+                            data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                              self.project_name)
+                        else:
+                            pass
         else:
             pass
 
@@ -290,6 +296,15 @@ class RepublikaSpider(object):
         else:
             num = ""
         return num
+
+    def get_title(self, html):
+        try:
+            d_title = html.xpath('//div[@class="wrap_detail_set"]/h1/text()')
+            d_title = "".join(d_title)
+        except Exception as e:
+            print(e)
+            d_title = ""
+        return d_title
 
 
 if __name__ == '__main__':
