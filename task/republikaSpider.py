@@ -26,6 +26,9 @@ from utils.ossUtil import get_image, update_img
 from utils.translate import translated_cn, en_con_to_cn_con
 
 
+# from utils.translate import translated_cn, en_con_to_cn_con
+
+
 # 印尼共和报-国际版
 
 class RepublikaSpider(object):
@@ -105,7 +108,7 @@ class RepublikaSpider(object):
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         if st:
             html = etree.HTML(con)
-            title_ = self.get_title(html)
+            title_ = self.get_title(con)
             if title_ and title__:
                 if title__ in title_:
                     title = title__
@@ -302,14 +305,20 @@ class RepublikaSpider(object):
             num = ""
         return num
 
-    def get_title(self, html):
-        try:
-            d_title = html.xpath('//div[@class="wrap_detail_set"]/h1/text()')
-            d_title = "".join(d_title)
-        except Exception as e:
-            print(e)
-            d_title = ""
-        return d_title
+    def get_title(self, con):
+        global con_html
+        soup = BeautifulSoup(con, 'lxml')
+        con_htmls = []
+        for divcon in soup.select('div.wrap_detail h1'):
+            locu_content = divcon.prettify()
+            con_locu = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
+            con_locu_ = con_locu.replace("\n", "").strip().lstrip()
+            con_locu = all_tag_replace_html(con_locu_)
+            con = con_locu.replace("  ", "")
+            con_htmls.append(con)
+            break
+        content_text = "".join(con_htmls)
+        return content_text
 
 
 if __name__ == '__main__':
