@@ -79,7 +79,11 @@ def en_con_to_cn_con(tran_str, cn_info):
     else:
         no_cn_contents = textwrap.wrap(tran_str, 4999)
     for no_cn_content in no_cn_contents:
-        cn_contents.append(translated_cn(no_cn_content, cn_info))
+        cn_con=translated_cn(no_cn_content, cn_info)
+        if "重播重播视频" in cn_con:
+            pass
+        else:
+            cn_contents.append(cn_con)
     cn_content = "".join(cn_contents).replace("\n\n\n", "</p><p>").replace("\n", "").strip().lstrip()
     if cn_content.startswith("<p>"):
         cn_content = cn_content.strip().lstrip()
