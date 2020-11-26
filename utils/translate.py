@@ -77,7 +77,7 @@ def en_con_to_cn_con(tran_str, cn_info):
     if len(tran_str_) < 4999:
         no_cn_contents.append(tran_str_)
     else:
-        no_cn_contents = textwrap.wrap(tran_str, 4999)
+        no_cn_contents = textwrap.wrap(tran_str_, 4999)
     for no_cn_content in no_cn_contents:
         cn_con=translated_cn(no_cn_content, cn_info)
         if "重播重播视频" in cn_con:
