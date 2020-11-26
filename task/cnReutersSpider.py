@@ -274,6 +274,7 @@ class CnReutersSpider(object):
         if "ArticleBodyWrapper" in html:
             contents = []
             for divcon in soup.select('div.ArticleBodyWrapper'):
+                [s.extract() for s in divcon("div")]
                 [s.extract() for s in divcon.find_all("div", {"class": "ArticleBody-byline-container-3H6dy"})]
                 [s.extract() for s in divcon.find_all("div", {"class": "Attribution-attribution-Y5JpY"})]
                 [s.extract() for s in divcon.find_all("div", {"class": "TrustBadge-trust-badge-20GM8"})]
