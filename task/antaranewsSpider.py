@@ -8,8 +8,6 @@
 # @Desc    : None
 import sys
 
-
-
 sys.path.append('..')
 import random
 import re
@@ -181,6 +179,7 @@ class AntaranewsSpider(object):
                         pass
         else:
             pass
+
     # TODO 内容格式化
     def get_content_html(self, html):
         global con, con_html
@@ -191,6 +190,7 @@ class AntaranewsSpider(object):
             for divcon in soup.select('div.single-image'):
                 [s.extract() for s in divcon('img')]
                 [s.extract() for s in divcon.find_all("div", {"class": "quote_old"})]
+                [s.extract() for s in divcon.find_all("div", {"footer": "post-meta"})]
                 locu_content = divcon.prettify()
                 con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
                 con = self.filter_html_clear_format(con)
@@ -198,7 +198,7 @@ class AntaranewsSpider(object):
                 con_html = con_html.replace("  ", "").replace("    ", "").strip()
                 con_htmls.append(con_html)
             content_text = "".join(con_htmls)
-            content_text = format_content_p(content_text)
+            content_text = self.format_content_p(content_text)
             content_text = all_tag_replace_html(content_text)
             if "&amp;" in content_text:
                 content_text.replace("&amp;", "&")
@@ -211,6 +211,7 @@ class AntaranewsSpider(object):
                 [s.extract() for s in divcon("script")]
                 [s.extract() for s in divcon.find_all("span", {"class": "baca-juga"})]
                 [s.extract() for s in divcon.find_all("div", {"class": "quote_old"})]
+                [s.extract() for s in divcon.find_all("div", {"footer": "post-meta"})]
                 locu_content = divcon.prettify()
                 con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
                 con = self.filter_html_clear_format(con)
@@ -218,7 +219,7 @@ class AntaranewsSpider(object):
                 con_html = con_html.replace("  ", "").replace("    ", "").strip()
                 con_htmls.append(con_html)
             content_text = "".join(con_htmls)
-            content_text = format_content_p(content_text)
+            content_text = self.format_content_p(content_text)
             content_text = all_tag_replace_html(content_text)
             if "&amp;" in content_text:
                 content_text = content_text.replace("&amp;", "&")
@@ -233,7 +234,32 @@ class AntaranewsSpider(object):
                 "<p>  </p>", "").replace("<p>   </p>", "")
         else:
             content_text = ""
+
         return content_text
+
+    def format_content_p(self, con_text):
+        con_ = con_text.split("<p>")
+        contents = []
+        for con in con_:
+            if con:
+                if "<p>" in con:
+                    con = con.replace("<p>", "").strip().lstrip()
+                if "</p>" in con:
+                    con = con.replace("</p>", "").strip().lstrip()
+                if con.startswith("延伸阅读"):
+                    pass
+                elif "Baca juga" in con:
+                    pass
+                else:
+                    contents.append(con)
+            else:
+                pass
+        contents_p = []
+        for con_p in contents:
+            con_p = "<p>" + con_p + "</p>"
+            contents_p.append(con_p)
+        content_html = "".join(contents_p)
+        return content_html
 
     # TODO 图片url
     def get_image_url(self, con):
