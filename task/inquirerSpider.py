@@ -132,13 +132,16 @@ class InquirerSpider(object):
                             content_text = contents_html
                             cn_content_text = cn_content_
                         content_text = content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
-                                                                                                               "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>","</p>")
+                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
+                            "<p></p>",
+                            "").replace(
+                            "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>", "</p>")
                         cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
-                                                                                                               "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "").replace("</p> <p>","</p><p>").replace("</ p>","</p>")
+                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
+                            "<p></p>",
+                            "").replace(
+                            "<p>  </p>", "").replace("<p>   </p>", "").replace("</p> <p>", "</p><p>").replace("</ p>",
+                                                                                                              "</p>")
                         spider_time = now_datetime()
                         body = content_text
                         cn_title = cn_title
@@ -206,7 +209,7 @@ class InquirerSpider(object):
             if "<p>VIDEO</p>" in content_text:
                 content_text = content_text.split("<p>VIDEO")[0]
             if "<p>—————" in content_text:
-                content_text=content_text.split("<p>—————")[0]
+                content_text = content_text.split("<p>—————")[0]
         else:
             soup = BeautifulSoup(html, 'lxml')
             con_htmls = []
@@ -236,10 +239,12 @@ class InquirerSpider(object):
             if "<p>VIDEO</p>" in content_text:
                 content_text = content_text.split("<p>VIDEO")[0]
             if "<p>—————" in content_text:
-                content_text=content_text.split("<p>—————")[0]
+                content_text = content_text.split("<p>—————")[0]
         content_text = content_text.replace("<p><p>", "<p>"). \
             replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
-            "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>","</p>")
+            "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>", "</p>")
+        if "<p>Click here for" in content_text:
+            content_text = content_text.split("<p>Click here for")[0]
         return content_text
 
     # TODO 图片url
