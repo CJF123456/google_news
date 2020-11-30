@@ -334,6 +334,7 @@ def data_insert_mssql(info_val, sql, md5, mmd5, project_name):
             mysql.update(sql, info_val)
             hset_md5_filter(md5, mmd5)
         except Exception as e:
+            #log.info(e)
             erro_text = e.__str__()
             if "Violation of UNIQUE KEY" in erro_text:
                 hset_md5_filter(md5, mmd5)
@@ -349,6 +350,7 @@ def data_insert_mssql(info_val, sql, md5, mmd5, project_name):
             mysql.update(sql, info_val)
             hset_md5_filter(md5, mmd5)
         except Exception as e:
+            #log.info(e)
             erro_text = e.__str__()
             if "Violation of UNIQUE KEY" in erro_text:
                 hset_md5_filter(md5, mmd5)
