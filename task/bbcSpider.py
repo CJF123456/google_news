@@ -18,7 +18,7 @@ from lxml import etree
 from mylog.mlog import log
 from configs import useragents
 from configs.dbconfig import NewsTaskSql
-from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import filter_html_clear_format, format_content_p, \
     all_tag_replace_html
@@ -102,7 +102,7 @@ class BbcSpider(object):
         pub_date_time = now_datetime_no()
         if pub_time < pub_date_time:
             log.info("数据不是最新" + pub_time)
-            hset_md5_filter(md5, self.mmd5)
+            # hset_md5_filter(md5, self.mmd5)
         else:
             if st:
                 html = etree.HTML(con)
