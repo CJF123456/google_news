@@ -173,6 +173,7 @@ class SmhSpider(object):
         con_htmls = []
         for divcon in soup.select('div._1665V'):
             [s.extract() for s in divcon("figure")]
+            #[s.extract() for s in divcon("div")]
             [s.extract() for s in divcon.find_all("div", {"class": "_2_2jC"})]
             locu_content = divcon.prettify()
             con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
