@@ -106,8 +106,9 @@ class KompasSpider(object):
             pub_date_time = now_datetime_no()
             if pub_time < pub_date_time:
                 log.info("数据不是最新" + pub_time)
-                hset_md5_filter(md5, self.mmd5)
+                #hset_md5_filter(md5, self.mmd5)
             else:
+                log.info("新闻发布日期：" + pub_time)
                 image_url = self.get_image_url(html)
                 caption = self.get_caption(html)
                 contents_html = self.get_content_html(con)
@@ -175,15 +176,15 @@ class KompasSpider(object):
                         # 入库mssql
                         data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
                                           self.project_name)
-
+                    log.info("翻译为空")
     # TODO 内容格式化
     def get_content_html(self, html):
         global con, con_html
         soup = BeautifulSoup(html, 'lxml')
         con_htmls = []
-        for divcon in soup.select('div.read__content'):
+        for divcon in soup.select('div.read__content div'):
             [s.extract() for s in divcon("script")]
-            [s.extract() for s in divcon("div")]
+            #[s.extract() for s in divcon("div")]
             [s.extract() for s in divcon("blockquote")]  # 外链
             [s.extract() for s in divcon.find_all("strong", {"class": "photo__caption"})]
             locu_content = divcon.prettify()
