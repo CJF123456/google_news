@@ -196,14 +196,7 @@ class CnReutersSpider(object):
             hset_md5_filter(md5, self.mmd5)
         else:
             if st:
-                html = etree.HTML(con)
-                try:
-                    image_text = html.xpath(
-                        '//article//button[@aria-label="image"]/figure//div[@role="img"][1]/@aria-label')
-                    caption = ''.join(image_text)
-                except Exception as e:
-                    print(e)
-                    caption = ""
+                caption = self.get_caption(con)
                 content = self.get_content_html(con)
                 if not content:
                     pass
@@ -258,6 +251,18 @@ class CnReutersSpider(object):
             else:
                 pass
 
+    def get_caption(self, con):
+        global image_text
+        html = etree.HTML(con)
+        try:
+            image_text = html.xpath(
+                '//article//button[@aria-label="image"]/figure//div[@role="img"][1]/@aria-label')
+            caption = ''.join(image_text)
+        except Exception as e:
+            print(e)
+            caption = ""
+        return caption
+
     def get_pub_time(self, con):
         try:
             mat = re.search(r"(\d{4}-\d{1,2}-\d{1,2})", con)
@@ -271,7 +276,25 @@ class CnReutersSpider(object):
     def get_content_html(self, html):
         global content_text
         soup = BeautifulSoup(html, 'lxml')
-        if "ArticleBodyWrapper" in html:
+        if 'class="ArticleBody-p-table-3vPxs"' in html:
+            contents = []
+            for divcon in soup.select('div.ArticleBody-p-table-3vPxs'):
+                [s.extract() for s in divcon("div")]
+                [s.extract() for s in divcon.find_all("div", {"class": "ArticleBody-byline-container-3H6dy"})]
+                [s.extract() for s in divcon.find_all("div", {"class": "Attribution-attribution-Y5JpY"})]
+                [s.extract() for s in divcon.find_all("div", {"class": "TrustBadge-trust-badge-20GM8"})]
+                locu_content = divcon.prettify()
+                con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
+                con = filter_html_clear_format(con)
+                content_ = self.cn_replace_html(con)
+                content_ = content_.replace("  ", '')
+                content_ = format_content_p(content_)
+                content_ = all_tag_replace_html(content_)
+                contents.append(content_)
+            content_text = "".join(contents)
+            if "<p>相关报导" in content_text:
+                content_text = content_text.split("<p>相关报导")[0]
+        elif "ArticleBodyWrapper" in html:
             contents = []
             for divcon in soup.select('div.ArticleBodyWrapper'):
                 [s.extract() for s in divcon("div")]
