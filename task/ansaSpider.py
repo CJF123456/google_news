@@ -110,8 +110,9 @@ class AnsaSpider(object):
             pub_date_time = now_datetime_no()
             if pub_time < pub_date_time:
                 log.info("数据不是最新" + pub_time)
-                hset_md5_filter(md5, self.mmd5)
+                #hset_md5_filter(md5, self.mmd5)
             else:
+                log.info("新闻时间" + pub_time)
                 image_url = self.get_image_url(html)
                 caption = self.get_caption(html)
                 contents_html = self.get_content_html(con)
@@ -177,7 +178,7 @@ class AnsaSpider(object):
                         data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
                                           self.project_name)
                     else:
-                        pass
+                        log.info("翻译异常len(cn_content_)："+str(len(cn_content_)))
 
     # TODO 替换各种不用的标签
     def filter_html_clear_format(self, format_info):
