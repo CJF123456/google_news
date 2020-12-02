@@ -88,11 +88,12 @@ class NedSpider(object):
                         log.info("数据不是最新" + pub_time)
                         #hset_md5_filter(md5, self.mmd5)
                     else:
-                        log.info("新闻发布时间：" + pub_time)
+                        #log.info("新闻发布时间：" + pub_time)
                         if hexists_md5_filter(md5, self.mmd5):
                             log.info(self.project_name + " info data already exists!")
                         else:
                             if detail_url:
+                                #print(detail_url,title)
                                     self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
                                                     pc_headers, md5, source_id,pub_time)
                 else:
@@ -122,7 +123,7 @@ class NedSpider(object):
                 else:
                     cn_caption = ""
                 cn_content_ = en_con_to_cn_con(contents_html, 'en')
-                if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
+                if cn_content_ and cn_title:
                     if image_url:
                         ii = get_image(image_url)
                         r_i = update_img(ii)
