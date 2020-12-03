@@ -8,8 +8,11 @@
 import sys
 
 
-
 sys.path.append('..')
+
+import time
+from mylog.mlog import log
+from utils.timeUtil import now_datetime
 from task.cnReutersSpider import CnReutersSpider
 from task.dwNewsSpider import DwNewsSpider
 from task.sputnikNewsSpider import SputnikNewsSpider
@@ -27,11 +30,7 @@ from task.smhSpider import SmhSpider
 from task.inquirerSpider import InquirerSpider
 from task.republikaSpider import RepublikaSpider
 from task.antaranewsSpider import AntaranewsSpider
-import time
-from mylog.mlog import log
-from utils.timeUtil import now_datetime
 from task.aljazeeraSpider import AljazeeraSpider
-
 from task.ansaSpider import AnsaSpider
 
 '''

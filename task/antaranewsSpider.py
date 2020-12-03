@@ -106,7 +106,7 @@ class AntaranewsSpider(object):
             pub_date_time = now_datetime_no()
             if pub_time < pub_date_time:
                 log.info("数据不是最新" + pub_time)
-                hset_md5_filter(md5, self.mmd5)
+                #hset_md5_filter(md5, self.mmd5)
             else:
                 subhead = self.get_subhead(con)
                 image_url = self.get_image_url(con)
@@ -382,6 +382,8 @@ class AntaranewsSpider(object):
             month = 10
         elif "November" in month:
             month = 11
+        elif "Desember" in month:
+            month=12
         return month
 
 

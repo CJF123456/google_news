@@ -8,8 +8,6 @@
 # @Desc    : None
 import sys
 
-
-
 sys.path.append('..')
 import random
 import re
@@ -17,15 +15,14 @@ import time
 from bs4 import BeautifulSoup
 from lxml import etree
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import all_tag_replace_html, format_content_p, get_month_en
 from utils.timeUtil import now_datetime, now_datetime_no, now_time
 from utils.translate import cat_to_chs, translated_cn, en_con_to_cn_con
-from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import get_image, update_img
-
+from configs.dbconfig import NewsTaskSql
 
 
 # 美国国家民主基金会
@@ -84,18 +81,16 @@ class NedSpider(object):
                     md5 = make_md5(md5_)
                     pub_time = self.get_pub_time(el, column_first)
                     pub_date_time = now_datetime_no()
-                    if pub_time < pub_date_time:
-                        log.info("数据不是最新" + pub_time)
-                        #hset_md5_filter(md5, self.mmd5)
+                    # if pub_time > pub_date_time:
+                    #     log.info("数据不是最新" + pub_time)
+                    #     print(title, detail_url)
+                    # else:
+                    if hexists_md5_filter(md5, self.mmd5):
+                        log.info(self.project_name + " info data already exists!")
                     else:
-                        #log.info("新闻发布时间：" + pub_time)
-                        if hexists_md5_filter(md5, self.mmd5):
-                            log.info(self.project_name + " info data already exists!")
-                        else:
-                            if detail_url:
-                                #print(detail_url,title)
-                                    self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
-                                                    pc_headers, md5, source_id,pub_time)
+                        if detail_url:
+                            self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
+                                            pc_headers, md5, source_id, pub_time)
                 else:
                     pass
 
@@ -106,7 +101,7 @@ class NedSpider(object):
         return format_info
 
     def get_detail(self, title, detail_url, url_code, column_first, column_second, kw_site,
-                   pc_headers, md5, source_id,pub_time):
+                   pc_headers, md5, source_id, pub_time):
         global con_, content_text, cn_content_text
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         if st:
@@ -134,10 +129,8 @@ class NedSpider(object):
                     else:
                         content_text = contents_html
                         cn_content_text = cn_content_
-                    content_text = content_text.replace("<p><p>", "<p>"). \
-                        replace("</p></p>", "</p>").replace("<p></p>", ""). \
-                        replace("<p> </p>", "").replace("<p></p>", "").replace(
-                        "<p>  </p>", "").replace("<p>   </p>", "").replace("<p></p>", "")
+                    if "<p></p>" in cn_content_text:
+                        cn_content_text = cn_content_text.replace("<p></p>", "")
                     spider_time = now_datetime()
                     body = content_text
                     cn_title = cn_title
@@ -170,8 +163,9 @@ class NedSpider(object):
                     # 入库mssql
                     data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
                                       self.project_name)
+
                 else:
-                    log.info("翻译异常len(cn_content_)："+str(len(cn_content_)))
+                    log.info("翻译异常len(cn_content_)：" + str(len(cn_content_)))
 
     # TODO 替换各种不用的标签
     def filter_html_clear_format(self, format_info):
@@ -211,10 +205,11 @@ class NedSpider(object):
         soup = BeautifulSoup(html, 'lxml')
         con_htmls = []
         for divcon in soup.select('div.entry-content'):
+            [s.extract() for s in divcon("h3")]
             [s.extract() for s in divcon("script")]
             [s.extract() for s in divcon("h1")]
             [s.extract() for s in divcon("figure")]
-            [s.extract() for s in divcon("h3")]
+            [s.extract() for s in divcon("font")]
             [s.extract() for s in divcon("div")]
             locu_content = divcon.prettify()
             con_ = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
@@ -226,11 +221,18 @@ class NedSpider(object):
             con_htmls.append(con_html)
         content_text = "".join(con_htmls)
         content_text = all_tag_replace_html(content_text)
+        content_text = "".join(content_text.split())
         if "&amp;" in content_text:
             content_text = content_text.replace("&amp;", "&")
+        if "\xa0" in content_text:
+            content_text = content_text.replace("\xa0", " ")
         content_text = content_text.replace("<p><p>", "<p>"). \
             replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
-            "<p>  </p>", "").replace("<p>   </p>", "").replace("<p></p>", "").replace("   ", "").replace("  ", "")
+            "<p>  </p>", "").replace("<p>   </p>", "").replace("<p></p>", "").replace("   ", "").replace("  ",
+                                                                                                         "").replace(
+            "<hr/>", "")
+        if "<p>Event Program" in content_text:
+            content_text = content_text.split("<p>Event Program")[0]
         return content_text
 
     # TODO 图片url
@@ -252,9 +254,9 @@ class NedSpider(object):
             caption = ""
         return caption
 
-    def get_pub_time(self, html,column_first):
+    def get_pub_time(self, html, column_first):
         if "events" in column_first:
-            pub_time=now_datetime()
+            pub_time = now_datetime()
         else:
             try:
                 pub_time_ = html.xpath('.//div[@class="event-date"]/text()')
@@ -263,7 +265,7 @@ class NedSpider(object):
                 month = get_month_en(month_)
                 day_ = pub_time_.split(" ")[1].replace(",", "")
                 year_ = pub_time_.split(" ")[2]
-                pub_time = year_ + "-" + month + "-" + day_ +" " +now_time()
+                pub_time = year_ + "-" + month + "-" + day_ + " " + now_time()
             except Exception as e:
                 print(e)
                 pub_time = now_datetime()

@@ -301,6 +301,8 @@ class AnsaSpider(object):
             month = 10
         elif "novembre" in month:
             month = 11
+        elif "dicembre" in month:
+            month=12
         return month
 
 
