@@ -108,9 +108,9 @@ class AnsaSpider(object):
             html = etree.HTML(con)
             pub_time = self.get_pub_time(con)
             pub_date_time = now_datetime_no()
-            if pub_time < pub_date_time:
+            if pub_time > pub_date_time:
                 log.info("数据不是最新" + pub_time)
-                hset_md5_filter(md5, self.mmd5)
+                #hset_md5_filter(md5, self.mmd5)
             else:
                 image_url = self.get_image_url(html)
                 caption = self.get_caption(html)
