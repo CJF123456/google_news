@@ -69,24 +69,24 @@ class DwNewsSpider(object):
                         pub_date_time = now_datetime_no()
                         md5_ = detail_url
                         md5 = make_md5(md5_)
-                        if pub_time < pub_date_time:
-                            log.info("数据不是最新" + pub_time)
-                            hset_md5_filter(md5, self.mmd5)
-                        else:
+                        # if pub_time > pub_date_time:
+                        #     log.info(self.project_name+" 数据不是最新" + pub_time)
+                        #     #hset_md5_filter(md5, self.mmd5)
+                        # else:
                             # 详情页url
-                            detail_url_code = str(format_info_int_re(detail_url))
-                            if hexists_md5_filter(md5, self.mmd5):
-                                log.info(self.project_name + " info data already exists!")
-                            else:
-                                main_category = item.get('data').get('mainCategory')
-                                # 缩略图
-                                caption, cdnUrl = self.get_caption_url(item)
-                                if not "视觉" in detail_url:
-                                    if "https://www.dwnews.com/" in detail_url:
-                                        self.get_detail(title, detail_url, main_category, pub_time,
+                        detail_url_code = str(format_info_int_re(detail_url))
+                        if hexists_md5_filter(md5, self.mmd5):
+                            log.info(self.project_name + " info data already exists!")
+                        else:
+                            main_category = item.get('data').get('mainCategory')
+                            # 缩略图
+                            caption, cdnUrl = self.get_caption_url(item)
+                            if not "视觉" in detail_url:
+                                if "https://www.dwnews.com/" in detail_url:
+                                    self.get_detail(title, detail_url, main_category, pub_time,
                                                         caption, cdnUrl, md5, detail_url_code, source_id)
-                                else:
-                                    pass
+                            else:
+                                pass
                 log.info(self.project_name + column_first + ' spider succ.')
         end_time = time.time()
         log.info(
