@@ -191,6 +191,7 @@ class InquirerSpider(object):
                 [s.extract() for s in divcon("<!-->")]
                 [s.extract() for s in divcon("h6")]
                 [s.extract() for s in divcon("i")]
+                #[s.extract() for s in divcon('figure')]
                 [s.extract() for s in divcon.find_all("style", {"type": "text/css"})]
                 locu_content = divcon.prettify()
                 con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
@@ -244,7 +245,7 @@ class InquirerSpider(object):
             replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
             "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>", "</p>")
         if "<p>Click here for" in content_text:
-            content_text = content_text.split("<p>Click here for")[0]
+            content_text = content_text.split("<p>Click here")[0]
         return content_text
 
     # TODO 图片url
