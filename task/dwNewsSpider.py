@@ -106,10 +106,13 @@ class DwNewsSpider(object):
 
     def get_detail(self, title, detail_url, main_category, pub_time, caption, cdnUrl,
                    md5, detail_url_code, source_id):
+        detail_url="https://www.dwnews.com/%E4%B8%AD%E5%9B%BD/60222685/%E8%A7%A3%E6%94%BE%E5%86%9B%E5%B7%B7%E6%88%98%E7%94%BB%E9%9D%A2%E5%85%AC%E5%BC%80%E5%8F%B0%E5%AA%92%E4%BD%93%E4%BA%BA%E6%AD%A6%E7%BB%9F%E5%8F%8D%E6%AD%A6%E7%BB%9F%E5%AF%B9%E5%86%B3%E5%BC%80%E5%90%AF"
         global ImageId, img_
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         if st:
             content_text = self.get_content_html(con)
+            print(content_text)
+            exit(-1)
             if not content_text:
                 pass
             else:
@@ -193,11 +196,13 @@ class DwNewsSpider(object):
         global content_text
         soup = BeautifulSoup(html, 'lxml')
         for divcon in soup.select('article div.sc-bdVaJa.jLaXBp'):
-            [s.extract() for s in divcon('figure', )]
+            [s.extract() for s in divcon('figure')]
+            [s.extract() for s in divcon('strong')]
             [s.extract() for s in divcon.find_all("div", {"class": "s2jnsig-0 hZOstq sc-gqjmRU rgrzA"})]
             [s.extract() for s in divcon.find_all("div", {"class": "lvt1ex-0 cPcXSN sc-bdVaJa hVSRSV"})]
             [s.extract() for s in divcon.find_all("div", {"class": "sc-bwzfXH liBCIH sc-bdVaJa hjfdHC"})]
             [s.extract() for s in divcon.find_all("div", {"class": "sc-bdVaJa hVSRSV"})]
+            [s.extract() for s in divcon.find_all("strong", {"class": "s1wvug8s-0 bbEmvD"})]
             locu_content = divcon.prettify()
             con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
             con = all_tag_replace_html_div_a(con)
