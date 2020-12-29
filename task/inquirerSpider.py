@@ -244,7 +244,7 @@ class InquirerSpider(object):
         content_text = content_text.replace("<p><p>", "<p>"). \
             replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
             "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>", "</p>")
-        if "<p>Click here for" in content_text:
+        if "<p>Click here" in content_text:
             content_text = content_text.split("<p>Click here")[0]
         return content_text
 
