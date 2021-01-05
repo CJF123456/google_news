@@ -303,6 +303,8 @@ class AnsaSpider(object):
             month = 11
         elif "dicembre" in month:
             month=12
+        elif "gennaio" in month:
+            month=1
         return month
 
 
