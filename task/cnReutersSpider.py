@@ -190,66 +190,66 @@ class CnReutersSpider(object):
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         cdnUrl = self.get_image_url(con)
         pub_time = self.get_pub_time(con)
-        pub_date_time = now_datetime_no()
-        if pub_time < pub_date_time:
-            log.info("数据不是最新" + pub_time)
-            hset_md5_filter(md5, self.mmd5)
-        else:
-            if st:
-                caption = self.get_caption(con)
-                content = self.get_content_html(con)
-                if not content:
-                    pass
-                else:
-                    if caption and cdnUrl:
-                        ii = get_image(cdnUrl)
-                        r_i = update_img(ii)
-                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                        content_text = img_ + content
-                        content_text = self.format_repalce_space(content_text)
-                        content_text = content_text.replace("<p><img", "<img")
-                    else:
-                        content_text = content
-                        content_text = self.format_repalce_space(content_text)
-                content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
-                                                                                                         "").replace(
-                    "<p>=</p>", "").replace("<p></p>", "")
-                spider_time = now_datetime()
-                # 采集时间
-                body = content_text
-                cn_title = title
-                create_time = spider_time
-                group_name = column_first
-                title = title
-                title = filter_emoji(title)
-                update_time = spider_time
-                website = detail_url
-                Uri = detail_url
-                Language = "zh"
-                DocTime = pub_time
-                CrawlTime = spider_time
-                Hidden = 0  # 去确认
-                file_name = ""
-                file_path = ""
-                classification = ""
-                cn_boty = ""
-                column_id = ''
-                creator = 0
-                if_top = 0
-                source_id = source_id
-                summary = ''
-                UriId = ''
-                keyword = ''
-                info_val = (
-                    body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
-                    keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                    CrawlTime,
-                    Hidden, file_name, file_path)
-                # 入库mssql
-                data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                  self.project_name)
-            else:
+        #pub_date_time = now_datetime_no()
+        # if pub_time < pub_date_time:
+        #     log.info("数据不是最新" + pub_time)
+        #     hset_md5_filter(md5, self.mmd5)
+        # else:
+        if st:
+            caption = self.get_caption(con)
+            content = self.get_content_html(con)
+            if not content:
                 pass
+            else:
+                if caption and cdnUrl:
+                    ii = get_image(cdnUrl)
+                    r_i = update_img(ii)
+                    img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                    content_text = img_ + content
+                    content_text = self.format_repalce_space(content_text)
+                    content_text = content_text.replace("<p><img", "<img")
+                else:
+                    content_text = content
+                    content_text = self.format_repalce_space(content_text)
+            content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
+                                                                                                     "").replace(
+                "<p>=</p>", "").replace("<p></p>", "")
+            spider_time = now_datetime()
+            # 采集时间
+            body = content_text
+            cn_title = title
+            create_time = spider_time
+            group_name = column_first
+            title = title
+            title = filter_emoji(title)
+            update_time = spider_time
+            website = detail_url
+            Uri = detail_url
+            Language = "zh"
+            DocTime = pub_time
+            CrawlTime = spider_time
+            Hidden = 0  # 去确认
+            file_name = ""
+            file_path = ""
+            classification = ""
+            cn_boty = ""
+            column_id = ''
+            creator = 0
+            if_top = 0
+            source_id = source_id
+            summary = ''
+            UriId = ''
+            keyword = ''
+            info_val = (
+                body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
+                keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                CrawlTime,
+                Hidden, file_name, file_path)
+            # 入库mssql
+            data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                              self.project_name)
+        else:
+            pass
 
     def get_caption(self, con):
         global image_text
@@ -327,6 +327,8 @@ class CnReutersSpider(object):
             try:
                 image_json = json.loads(image_el)
                 image_url = image_json.get('image')['url']
+                if "https://s1.reutersmedia.net/resources_v2/images/rcom-default.png?w=800" in image_url:
+                    image_url=''
             except Exception as e:
                 print(e)
                 image_url = ''
