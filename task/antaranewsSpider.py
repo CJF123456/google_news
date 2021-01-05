@@ -172,7 +172,6 @@ class AntaranewsSpider(object):
                             keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
                             CrawlTime,
                             Hidden, file_name, file_path)
-                        print(info_val)
                         # 入库mssql
                         data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
                                           self.project_name)
