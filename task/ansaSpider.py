@@ -90,7 +90,7 @@ class AnsaSpider(object):
                                 pass
                             else:
                                 self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
-                                               pc_headers, md5, source_id)
+                                                pc_headers, md5, source_id)
                 else:
                     pass
 
@@ -107,78 +107,79 @@ class AnsaSpider(object):
         if st:
             html = etree.HTML(con)
             pub_time = self.get_pub_time(con)
-            pub_date_time = now_datetime_no()
-            if pub_time > pub_date_time:
-                log.info("数据不是最新" + pub_time)
-                #hset_md5_filter(md5, self.mmd5)
+            # pub_date_time = now_datetime_no()
+            # if pub_time > pub_date_time:
+            #     log.info("数据不是最新" + pub_time)
+            #     #hset_md5_filter(md5, self.mmd5)
+            # else:
+            #     log.info("新闻时间" + pub_time)
+            image_url = self.get_image_url(html)
+            caption = self.get_caption(html)
+            contents_html = self.get_content_html(con)
+            cn_title = translated_cn(title, 'it')
+            if not contents_html:
+                pass
             else:
-                log.info("新闻时间" + pub_time)
-                image_url = self.get_image_url(html)
-                caption = self.get_caption(html)
-                contents_html = self.get_content_html(con)
-                cn_title = translated_cn(title, 'it')
-                if not contents_html:
-                    pass
+                if caption:
+                    cn_caption = translated_cn(caption, 'it')
                 else:
-                    if caption:
-                        cn_caption = translated_cn(caption, 'it')
+                    cn_caption = ""
+                cn_content_ = en_con_to_cn_con(contents_html, 'it')
+                if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
+                    if image_url:
+                        image_url = self.first_url + image_url
+                        ii = get_image(image_url)
+                        r_i = update_img(ii)
+                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                        content_text = img_ + contents_html
+                        cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
+                        cn_content_text = cn_img_ + cn_content_
                     else:
-                        cn_caption = ""
-                    cn_content_ = en_con_to_cn_con(contents_html, 'it')
-                    if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
-                        if image_url:
-                            image_url = self.first_url + image_url
-                            ii = get_image(image_url)
-                            r_i = update_img(ii)
-                            img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                            content_text = img_ + contents_html
-                            cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
-                            cn_content_text = cn_img_ + cn_content_
-                        else:
-                            content_text = contents_html
-                            cn_content_text = cn_content_
-                        content_text = content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
-                                                                                                               "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "")
-                        cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
-                                                                                                               "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "")
-                        spider_time = now_datetime()
-                        body = content_text
-                        cn_title = cn_title
-                        create_time = spider_time
-                        group_name = column_first
-                        update_time = spider_time
-                        website = detail_url
-                        Uri = detail_url
-                        Language = "zh"
-                        DocTime = pub_time
-                        CrawlTime = spider_time
-                        Hidden = 0  # 去确认
-                        file_name = ""
-                        file_path = ""
-                        classification = ""
-                        cn_boty = cn_content_text
-                        column_id = ''
-                        creator = 0
-                        if_top = 0
-                        source_id = source_id
-                        summary = ''
-                        UriId = ''
-                        keyword = ''
-                        info_val = (
-                            body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
-                            if_top,
-                            keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                            CrawlTime,
-                            Hidden, file_name, file_path)
-                        # 入库mssql
-                        data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                          self.project_name)
-                    else:
-                        log.info("翻译异常len(cn_content_)："+str(len(cn_content_)))
+                        content_text = contents_html
+                        cn_content_text = cn_content_
+                    content_text = content_text.replace("<p><p>", "<p>"). \
+                        replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
+                                                                                                           "").replace(
+                        "<p>  </p>", "").replace("<p>   </p>", "")
+                    cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
+                        replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
+                                                                                                           "").replace(
+                        "<p>  </p>", "").replace("<p>   </p>", "")
+                    spider_time = now_datetime()
+                    body = content_text
+                    cn_title = cn_title
+                    create_time = spider_time
+                    group_name = column_first
+                    update_time = spider_time
+                    website = detail_url
+                    Uri = detail_url
+                    Language = "zh"
+                    DocTime = pub_time
+                    CrawlTime = spider_time
+                    Hidden = 0  # 去确认
+                    file_name = ""
+                    file_path = ""
+                    classification = ""
+                    cn_boty = cn_content_text
+                    column_id = ''
+                    creator = 0
+                    if_top = 0
+                    source_id = source_id
+                    summary = ''
+                    UriId = ''
+                    keyword = ''
+                    info_val = (
+                        body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
+                        if_top,
+                        keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                        CrawlTime,
+                        Hidden, file_name, file_path)
+                    # 入库mssql
+                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                      self.project_name)
+                else:
+                    log.info("翻译异常len(cn_content_)：" + str(len(cn_content_)))
+
 
     # TODO 替换各种不用的标签
     def filter_html_clear_format(self, format_info):
@@ -196,6 +197,7 @@ class AnsaSpider(object):
                                                                                                             '').replace(
                 "<br/>", '<p>')
         return format_info
+
 
     # TODO 内容格式化
     def get_content_html(self, html):
@@ -224,6 +226,7 @@ class AnsaSpider(object):
             "<p>  </p>", "").replace("<p>   </p>", "")
         return content_text
 
+
     # TODO 图片url
     def get_image_url(self, html):
         try:
@@ -235,6 +238,7 @@ class AnsaSpider(object):
             image_url = ""
         return image_url
 
+
     def get_caption(self, html):
         try:
             caption = html.xpath('//div[@class="news-caption hidden-phone"]/em/text()')[0]
@@ -245,6 +249,7 @@ class AnsaSpider(object):
             print(e)
             caption = ""
         return caption
+
 
     def get_pub_time(self, con):
         global pub_el, pub_time_, date_
@@ -296,15 +301,16 @@ class AnsaSpider(object):
             pub_time = date_ + " " + time_ + ":00"
         return pub_time
 
+
     def get_month_ydl(self, month):
         if "ottobre" in month:
             month = 10
         elif "novembre" in month:
             month = 11
         elif "dicembre" in month:
-            month=12
+            month = 12
         elif "gennaio" in month:
-            month=1
+            month = 1
         return month
 
 
