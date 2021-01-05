@@ -384,6 +384,8 @@ class AntaranewsSpider(object):
             month = 11
         elif "Desember" in month:
             month=12
+        elif "January" in month:
+            month=1
         return month
 
 
