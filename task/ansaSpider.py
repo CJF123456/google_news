@@ -179,6 +179,7 @@ class AnsaSpider(object):
                                       self.project_name)
                 else:
                     log.info("翻译异常len(cn_content_)：" + str(len(cn_content_)))
+                    log.info(cn_content_)
 
 
     # TODO 替换各种不用的标签
