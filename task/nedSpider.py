@@ -86,7 +86,8 @@ class NedSpider(object):
                     #     print(title, detail_url)
                     # else:
                     if hexists_md5_filter(md5, self.mmd5):
-                        log.info(self.project_name + " info data already exists!")
+                        pass
+                        #log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url:
                             self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,

@@ -39,7 +39,6 @@ from task.ansaSpider import AnsaSpider
 
 
 def parse_it():
-    #pass
     # anse
     AnsaSpider().parse()
 
@@ -76,7 +75,7 @@ def parse_en():
     LtnSpider().parse()
 
 
-def pasrse_cn():
+def parse_cn():
     # 半岛电视台 完结
     AljazeeraSpider().parse()
     # 雅加达邮报 完结
@@ -94,7 +93,7 @@ def parse_c():
     start_time = time.time()
     log.info('parse_c spider start... ')
     parse_en()
-    pasrse_cn()
+    parse_cn()
     parse_id()
     parse_it()
     end_time = time.time()

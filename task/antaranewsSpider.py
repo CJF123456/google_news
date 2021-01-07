@@ -15,11 +15,10 @@ import time
 from bs4 import BeautifulSoup
 from lxml import etree
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
-from utils.datautil import format_content_p, \
-    all_tag_replace_html
+from utils.datautil import all_tag_replace_html
 from utils.timeUtil import now_datetime, now_datetime_no
 from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import get_image, update_img
@@ -82,7 +81,8 @@ class AntaranewsSpider(object):
                     md5_ = detail_url
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
-                        log.info(self.project_name + " info data already exists!")
+                        pass
+                        #log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
                             self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
@@ -104,81 +104,83 @@ class AntaranewsSpider(object):
             html = etree.HTML(con)
             pub_time = self.get_pub_time(html, column_first)
             pub_date_time = now_datetime_no()
-            if pub_time < pub_date_time:
-                log.info("数据不是最新" + pub_time)
-                #hset_md5_filter(md5, self.mmd5)
+            # if pub_time < pub_date_time:
+            #     log.info("数据不是最新" + pub_time)
+            #     #hset_md5_filter(md5, self.mmd5)
+            # else:
+            subhead = self.get_subhead(con)
+            image_url = self.get_image_url(con)
+            caption = self.get_caption(html)
+            contents_html = self.get_content_html(con)
+            cn_title = translated_cn(title, 'id')
+            if not contents_html:
+                pass
             else:
-                subhead = self.get_subhead(con)
-                image_url = self.get_image_url(con)
-                caption = self.get_caption(html)
-                contents_html = self.get_content_html(con)
-                cn_title = translated_cn(title, 'id')
-                if not contents_html:
-                    pass
+                contents_html = subhead + self.get_content_html(con)
+                if caption:
+                    cn_caption = translated_cn(caption, 'id')
                 else:
-                    contents_html = subhead + self.get_content_html(con)
-                    if caption:
-                        cn_caption = translated_cn(caption, 'id')
+                    cn_caption = ""
+                cn_content_ = en_con_to_cn_con(contents_html, 'id')
+                if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
+                    if image_url:
+                        ii = get_image(image_url)
+                        r_i = update_img(ii)
+                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                        content_text = img_ + contents_html
+                        cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
+                        cn_content_text = cn_img_ + cn_content_
                     else:
-                        cn_caption = ""
-                    cn_content_ = en_con_to_cn_con(contents_html, 'id')
-                    if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
-                        if image_url:
-                            ii = get_image(image_url)
-                            r_i = update_img(ii)
-                            img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                            content_text = img_ + contents_html
-                            cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
-                            cn_content_text = cn_img_ + cn_content_
-                        else:
-                            content_text = contents_html
-                            cn_content_text = cn_content_
-                        content_text = content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                            "<p></p>",
-                            "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "")
-                        cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                            "<p></p>",
-                            "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "")
-                        spider_time = now_datetime()
-                        body = content_text
-                        cn_title = cn_title
-                        create_time = spider_time
-                        group_name = column_first
-                        update_time = spider_time
-                        website = detail_url
-                        Uri = detail_url
-                        Language = "zh"
-                        DocTime = pub_time
-                        CrawlTime = spider_time
-                        Hidden = 0  # 去确认
-                        file_name = ""
-                        file_path = ""
-                        classification = ""
-                        cn_boty = cn_content_text
-                        column_id = ''
-                        creator = 0
-                        if_top = 0
-                        source_id = source_id
-                        summary = ''
-                        UriId = ''
-                        keyword = ''
-                        info_val = (
-                            body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
-                            if_top,
-                            keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                            CrawlTime,
-                            Hidden, file_name, file_path)
-                        # 入库mssql
-                        data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                          self.project_name)
-                    else:
-                        pass
+                        content_text = contents_html
+                        cn_content_text = cn_content_
+                    content_text = content_text.replace("<p><p>", "<p>"). \
+                        replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
+                        "<p></p>",
+                        "").replace(
+                        "<p>  </p>", "").replace("<p>   </p>", "")
+                    cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
+                        replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
+                        "<p></p>",
+                        "").replace(
+                        "<p>  </p>", "").replace("<p>   </p>", "")
+                    spider_time = now_datetime()
+                    body = content_text
+                    cn_title = cn_title
+                    create_time = spider_time
+                    group_name = column_first
+                    update_time = spider_time
+                    website = detail_url
+                    Uri = detail_url
+                    Language = "zh"
+                    DocTime = pub_time
+                    CrawlTime = spider_time
+                    Hidden = 0  # 去确认
+                    file_name = ""
+                    file_path = ""
+                    classification = ""
+                    cn_boty = cn_content_text
+                    column_id = ''
+                    creator = 0
+                    if_top = 0
+                    source_id = source_id
+                    summary = ''
+                    UriId = ''
+                    keyword = ''
+                    info_val = (
+                        body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
+                        if_top,
+                        keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                        CrawlTime,
+                        Hidden, file_name, file_path)
+                    # 入库mssql
+                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                      self.project_name)
+                else:
+                    pass
+
         else:
             pass
+
 
     # TODO 内容格式化
     def get_content_html(self, html):
@@ -237,6 +239,7 @@ class AntaranewsSpider(object):
 
         return content_text
 
+
     def format_content_p(self, con_text):
         con_ = con_text.split("<p>")
         contents = []
@@ -260,6 +263,7 @@ class AntaranewsSpider(object):
             contents_p.append(con_p)
         content_html = "".join(contents_p)
         return content_html
+
 
     # TODO 图片url
     def get_image_url(self, con):
@@ -292,6 +296,7 @@ class AntaranewsSpider(object):
                 image_url = ""
         return image_url
 
+
     def get_caption(self, html):
         try:
             caption = html.xpath('//p[@class="wp-caption-text"]/text()')[0]
@@ -302,6 +307,7 @@ class AntaranewsSpider(object):
             print(e)
             caption = ""
         return caption
+
 
     def get_pub_time(self, html, column_first):
         global pub_el
@@ -319,6 +325,7 @@ class AntaranewsSpider(object):
             log.info(e)
             pub_time = now_datetime_no()
         return pub_time
+
 
     def filter_html_clear_format(self, format_info):
         if format_info:
@@ -343,6 +350,7 @@ class AntaranewsSpider(object):
 
         return format_info
 
+
     def get_date_am_pm(self, info_):
         global num
         if ":" in info_:
@@ -357,6 +365,7 @@ class AntaranewsSpider(object):
         else:
             num = ""
         return num
+
 
     def get_subhead(self, con):
         if '<div class="quote_old">' in con:
@@ -376,6 +385,7 @@ class AntaranewsSpider(object):
             subhead = ""
         return subhead
 
+
     # 印尼月份
     def get_month_ydl(self, month):
         if "Oktober" in month:
@@ -383,9 +393,9 @@ class AntaranewsSpider(object):
         elif "November" in month:
             month = 11
         elif "Desember" in month:
-            month=12
+            month = 12
         elif "Januar" in month:
-            month=1
+            month = 1
         return month
 
 

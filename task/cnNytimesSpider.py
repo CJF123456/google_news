@@ -100,7 +100,8 @@ class CnNytimesSpider(object):
                     md5_ = detail_url
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
-                        log.info(self.project_name + " info data already exists!")
+                        pass
+                        #log.info(self.project_name + " info data already exists!")
                     else:
                         self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
                                         pc_headers, md5, img_url, img_text, source_id)
@@ -113,76 +114,76 @@ class CnNytimesSpider(object):
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         pub_time = self.get_pub_time(con)
         pub_date_time = now_datetime_no()
-        if pub_time < pub_date_time:
-            log.info("数据不是最新" + pub_time)
-            hset_md5_filter(md5, self.mmd5)
-        else:
-            if st:
-                try:
-                    html = etree.HTML(con)
-                    column_ = html.xpath('//div[@class="col-4 section-title"]/h3/text()')
-                    column_first = "".join(column_)
-                except Exception as e:
-                    print(e)
-                    column_first = column_first
-                column_list = ["国际", "中国", "商业与经济", "观点与评论", "美国", "亚太", "商业与经济", "欧洲", "观点"]
-                if column_first not in column_list:
+        # if pub_time < pub_date_time:
+        #     log.info("数据不是最新" + pub_time)
+        #     hset_md5_filter(md5, self.mmd5)
+        # else:
+        if st:
+            try:
+                html = etree.HTML(con)
+                column_ = html.xpath('//div[@class="col-4 section-title"]/h3/text()')
+                column_first = "".join(column_)
+            except Exception as e:
+                print(e)
+                column_first = column_first
+            column_list = ["国际", "中国", "商业与经济", "观点与评论", "美国", "亚太", "商业与经济", "欧洲", "观点"]
+            if column_first not in column_list:
+                pass
+            else:
+                caption = img_text
+                contents_html = self.get_content_html(con)
+                if not contents_html:
                     pass
                 else:
-                    caption = img_text
-                    contents_html = self.get_content_html(con)
-                    if not contents_html:
+                    if img_url:
+                        ii = get_image(img_url)
+                        r_i = update_img(ii)
+                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                        content_text = img_ + contents_html
+                        content_text = content_text.replace("<p><img", "<img")
+                    else:
+                        content_text = contents_html
+                    content_text = filter_emoji(content_text)
+                    spider_time = now_datetime()
+                    # 采集时间
+                    body = content_text
+                    if "<!DOCTYPE html>" in content_text:
                         pass
                     else:
-                        if img_url:
-                            ii = get_image(img_url)
-                            r_i = update_img(ii)
-                            img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                            content_text = img_ + contents_html
-                            content_text = content_text.replace("<p><img", "<img")
-                        else:
-                            content_text = contents_html
-                        content_text = filter_emoji(content_text)
-                        spider_time = now_datetime()
-                        # 采集时间
-                        body = content_text
-                        if "<!DOCTYPE html>" in content_text:
-                            pass
-                        else:
-                            cn_title = title
-                            create_time = spider_time
-                            group_name = column_first
-                            title = title
-                            title = filter_emoji(title)
-                            update_time = spider_time
-                            website = detail_url
-                            Uri = detail_url
-                            Language = "zh"
-                            DocTime = pub_time
-                            CrawlTime = spider_time
-                            Hidden = 0  # 去确认
-                            file_name = ""
-                            file_path = ""
-                            classification = ""
-                            cn_boty = ""
-                            column_id = ''
-                            creator = 0
-                            if_top = 0
-                            source_id = source_id
-                            summary = ''
-                            UriId = ''
-                            keyword = ''
-                            info_val = (
-                                body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
-                                if_top,
-                                keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                                CrawlTime,
-                                Hidden, file_name, file_path)
-                            # 入库mssql
-                            data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                              self.project_name)
-            else:
-                pass
+                        cn_title = title
+                        create_time = spider_time
+                        group_name = column_first
+                        title = title
+                        title = filter_emoji(title)
+                        update_time = spider_time
+                        website = detail_url
+                        Uri = detail_url
+                        Language = "zh"
+                        DocTime = pub_time
+                        CrawlTime = spider_time
+                        Hidden = 0  # 去确认
+                        file_name = ""
+                        file_path = ""
+                        classification = ""
+                        cn_boty = ""
+                        column_id = ''
+                        creator = 0
+                        if_top = 0
+                        source_id = source_id
+                        summary = ''
+                        UriId = ''
+                        keyword = ''
+                        info_val = (
+                            body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
+                            if_top,
+                            keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                            CrawlTime,
+                            Hidden, file_name, file_path)
+                        # 入库mssql
+                        data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                          self.project_name)
+        else:
+            pass
 
     def get_pub_time(self, con):
         try:

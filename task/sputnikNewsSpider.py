@@ -81,7 +81,8 @@ class SputnikNewsSpider(object):
                     md5_ = detail_url
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
-                        log.info(self.project_name + " info data already exists!")
+                        pass
+                       # log.info(self.project_name + " info data already exists!")
                     else:
                         url_code = detail_url.replace("http://sputniknews.cn/", "").split("/")[0]
                         url_limit_code = ["society", "politics", "military", "economics", "russia_china_relations",
@@ -111,57 +112,57 @@ class SputnikNewsSpider(object):
         content = self.get_content_html(con)
         if st:
             html = etree.HTML(con)
-            pub_time=self.get_pub_time(html)
+            pub_time = self.get_pub_time(html)
             pub_date_time = now_datetime_no()
-            if pub_time < pub_date_time:
-                log.info("数据不是最新" + pub_time)
-                hset_md5_filter(md5, self.mmd5)
+            # if pub_time < pub_date_time:
+            #     log.info("数据不是最新" + pub_time)
+            #     hset_md5_filter(md5, self.mmd5)
+            # else:
+            if not content:
+                pass
             else:
-                if not content:
-                    pass
+                if image_url:
+                    caption = ""
+                    ii = get_image(image_url)
+                    r_i = update_img(ii)
+                    img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                    content_text = img_ + content.lstrip().strip()
+                    content_text = content_text.replace("<p><img", "<img")
                 else:
-                    if image_url:
-                        caption = ""
-                        ii = get_image(image_url)
-                        r_i = update_img(ii)
-                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                        content_text = img_ + content.lstrip().strip()
-                        content_text = content_text.replace("<p><img", "<img")
-                    else:
-                        content_text = content
-                    content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
-                    spider_time = now_datetime()
-                    # 采集时间
-                    body = content_text
-                    cn_title = title
-                    create_time = spider_time
-                    group_name = column_first
-                    update_time = spider_time
-                    website = detail_url
-                    Uri = detail_url
-                    Language = "zh"
-                    DocTime = pub_time
-                    CrawlTime = spider_time
-                    Hidden = 0  # 去确认
-                    file_name = ""
-                    file_path = ""
-                    classification = ""
-                    cn_boty = ''
-                    column_id = ''
-                    creator = 0
-                    if_top = 0
-                    source_id = source_id
-                    summary = ''
-                    UriId = ''
-                    keyword = ''
-                    info_val = (
-                        body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
-                        keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                        CrawlTime,
-                        Hidden, file_name, file_path)
-                    # 入库mssql
-                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                      self.project_name)
+                    content_text = content
+                content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
+                spider_time = now_datetime()
+                # 采集时间
+                body = content_text
+                cn_title = title
+                create_time = spider_time
+                group_name = column_first
+                update_time = spider_time
+                website = detail_url
+                Uri = detail_url
+                Language = "zh"
+                DocTime = pub_time
+                CrawlTime = spider_time
+                Hidden = 0  # 去确认
+                file_name = ""
+                file_path = ""
+                classification = ""
+                cn_boty = ''
+                column_id = ''
+                creator = 0
+                if_top = 0
+                source_id = source_id
+                summary = ''
+                UriId = ''
+                keyword = ''
+                info_val = (
+                    body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
+                    keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                    CrawlTime,
+                    Hidden, file_name, file_path)
+                # 入库mssql
+                data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                  self.project_name)
         else:
             pass
 

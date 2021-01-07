@@ -9,7 +9,7 @@ if [ "$cron_start_task" -eq "0" ]
 then
 cd /data/python_server/google_news/task/
 
-python cron_start_task.py &
+python3 cron_start_task.py &
 cd /data/python_server/logs/
 now=`date +%Y-%m-%d[%H:%M:%S]`
 echo "at $now start cron_start_task.py\n">> cron_start_task.log

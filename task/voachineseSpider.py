@@ -97,7 +97,8 @@ class VoachineseSpider(object):
                             md5_ = detail_url
                             md5 = make_md5(md5_)
                             if hexists_md5_filter(md5, self.mmd5):
-                                log.info(self.project_name + " info data already exists!")
+                                pass
+                                #log.info(self.project_name + " info data already exists!")
                             else:
                                 if detail_url.startswith('https://www.voachinese.com/a/') and detail_url.endswith(
                                         ".html"):
@@ -131,57 +132,58 @@ class VoachineseSpider(object):
         image_url = self.get_image_url(html)
         pub_time = self.get_pub_time(html)
         pub_date_time = now_datetime_no()
-        if pub_time < pub_date_time:
-            log.info("数据不是最新" + pub_time)
-            hset_md5_filter(md5, self.mmd5)
-        else:
-            caption = self.get_caption(html)
-            tag_con = self.get_tag(html)
-            if st:
-                content = self.get_content_html(con, tag_con)
-                if not content:
-                    pass
+        # if pub_time < pub_date_time:
+        #     log.info("数据不是最新" + pub_time)
+        #     hset_md5_filter(md5, self.mmd5)
+        # else:
+        caption = self.get_caption(html)
+        tag_con = self.get_tag(html)
+        if st:
+            content = self.get_content_html(con, tag_con)
+            if not content:
+                pass
+            else:
+                if image_url:
+                    ii = get_image(image_url)
+                    r_i = update_img(ii)
+                    img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                    content_text = img_ + content
                 else:
-                    if image_url:
-                        ii = get_image(image_url)
-                        r_i = update_img(ii)
-                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                        content_text = img_ + content
-                    else:
-                        content_text = content
-                    content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
-                                                                                                             "")
-                    spider_time = now_datetime()
-                    # 采集时间
-                    body = content_text
-                    cn_title = title
-                    create_time = spider_time
-                    group_name = column_first
-                    update_time = spider_time
-                    website = detail_url
-                    Uri = detail_url
-                    Language = "zh"
-                    DocTime = pub_time
-                    CrawlTime = spider_time
-                    Hidden = 0  # 去确认
-                    file_name = ""
-                    file_path = ""
-                    classification = ""
-                    cn_boty = ""
-                    column_id = ''
-                    creator = 0
-                    if_top = 0
-                    source_id = source_id
-                    summary = ''
-                    UriId = ''
-                    keyword = ''
-                    info_val = (
-                        body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
-                        keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                        CrawlTime,
-                        Hidden, file_name, file_path)
-                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                      self.project_name)
+                    content_text = content
+                content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
+                                                                                                         "")
+                spider_time = now_datetime()
+                # 采集时间
+                body = content_text
+                cn_title = title
+                create_time = spider_time
+                group_name = column_first
+                update_time = spider_time
+                website = detail_url
+                Uri = detail_url
+                Language = "zh"
+                DocTime = pub_time
+                CrawlTime = spider_time
+                Hidden = 0  # 去确认
+                file_name = ""
+                file_path = ""
+                classification = ""
+                cn_boty = ""
+                column_id = ''
+                creator = 0
+                if_top = 0
+                source_id = source_id
+                summary = ''
+                UriId = ''
+                keyword = ''
+                info_val = (
+                    body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name, if_top,
+                    keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                    CrawlTime,
+                    Hidden, file_name, file_path)
+                data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                  self.project_name)
+
 
     def get_pub_time(self, html):
         try:
@@ -192,6 +194,7 @@ class VoachineseSpider(object):
             print(e)
             pub_time = now_datetime()
         return pub_time
+
 
     # TODO 内容格式化
     def get_content_html(self, html, tag_con):
@@ -229,6 +232,7 @@ class VoachineseSpider(object):
         content_text_cn = "".join(cat_to_chs(content_text))
         return content_text_cn
 
+
     # TODO 图片url
     def get_image_url(self, html):
         try:
@@ -239,6 +243,7 @@ class VoachineseSpider(object):
             image_url = ""
         return image_url
 
+
     def get_caption(self, html):
         try:
             caption = html.xpath('//div[@class="cover-media"]/figure/div[@class="img-wrap"]//img/@alt')
@@ -247,6 +252,7 @@ class VoachineseSpider(object):
             print(e)
             caption = ""
         return caption
+
 
     def get_tag(self, html):
         try:

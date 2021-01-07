@@ -78,20 +78,21 @@ class KyodonewsSpider(object):
                     title = ""
                 pub_time = self.get_pub_time(el)
                 pub_date_time = now_datetime_no()
-                if pub_time < pub_date_time:
-                    log.info("数据不是最新" + pub_time)
-                else:
-                    if url_code and title:
-                        detail_url = self.first_url + url_code
-                        md5_ = detail_url
-                        md5 = make_md5(md5_)
-                        if hexists_md5_filter(md5, self.mmd5):
-                            log.info(self.project_name + " info data already exists!")
-                        else:
-                            self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
-                                            pc_headers, md5, pub_time, source_id)
-                    else:
+                # if pub_time < pub_date_time:
+                #     log.info("数据不是最新" + pub_time)
+                # else:
+                if url_code and title:
+                    detail_url = self.first_url + url_code
+                    md5_ = detail_url
+                    md5 = make_md5(md5_)
+                    if hexists_md5_filter(md5, self.mmd5):
                         pass
+                        #log.info(self.project_name + " info data already exists!")
+                    else:
+                        self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
+                                        pc_headers, md5, pub_time, source_id)
+                else:
+                    pass
 
     def get_pub_time(self, el):
         try:

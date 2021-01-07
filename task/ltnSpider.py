@@ -8,8 +8,6 @@
 # @Desc    : None
 import sys
 
-
-
 sys.path.append('..')
 import random
 import re
@@ -26,6 +24,7 @@ from utils.timeUtil import now_datetime, now_datetime_no
 from utils.translate import cat_to_chs
 from utils.ossUtil import get_image, update_img
 from configs.dbconfig import NewsTaskSql
+
 
 # 自由时报电子报
 
@@ -85,7 +84,8 @@ class LtnSpider(object):
                         md5_ = detail_url
                         md5 = make_md5(md5_)
                         if hexists_md5_filter(md5, self.mmd5):
-                            log.info(self.project_name + " info data already exists!")
+                            pass
+                            #log.info(self.project_name + " info data already exists!")
                         else:
                             if detail_url and title:
                                 self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
@@ -117,7 +117,8 @@ class LtnSpider(object):
                         md5_ = detail_url
                         md5 = make_md5(md5_)
                         if hexists_md5_filter(md5, self.mmd5):
-                            log.info(self.project_name + " info data already exists!")
+                            pass
+                            #log.info(self.project_name + " info data already exists!")
                         else:
                             if detail_url and title:
                                 self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
@@ -141,75 +142,15 @@ class LtnSpider(object):
             html = etree.HTML(con)
             pub_time = self.get_pub_time(html)
             pub_date_time = now_datetime_no()
-            if pub_time < pub_date_time:
-                log.info("数据不是最新" + pub_time)
-                hset_md5_filter(md5, self.mmd5)
+            # if pub_time < pub_date_time:
+            #     log.info("数据不是最新" + pub_time)
+            #     hset_md5_filter(md5, self.mmd5)
+            # else:
+            image_url = self.get_image_url(html)
+            if not image_url:
+                pass
             else:
-                image_url = self.get_image_url(html)
-                if not image_url:
-                    pass
-                else:
-                    caption = self.get_caption(html)
-                    if st:
-                        contents_html = self.get_content_html(con)
-                        if not contents_html:
-                            pass
-                        else:
-                            if image_url:
-                                ii = get_image(image_url)
-                                r_i = update_img(ii)
-                                img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                                content_text = img_ + contents_html
-
-                            else:
-                                content_text = contents_html
-                            content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace(
-                                "<p></p>",
-                                "")
-                            spider_time = now_datetime()
-                            body = content_text
-                            cn_title = title
-                            create_time = spider_time
-                            group_name = column_first
-                            update_time = spider_time
-                            website = detail_url
-                            Uri = detail_url
-                            Language = "zh"
-                            DocTime = pub_time
-                            CrawlTime = spider_time
-                            Hidden = 0  # 去确认
-                            file_name = ""
-                            file_path = ""
-                            classification = ""
-                            cn_boty = ''
-                            column_id = ''
-                            creator = 0
-                            if_top = 0
-                            source_id = source_id
-                            summary = ''
-                            UriId = ''
-                            keyword = ''
-                            info_val = (
-                                body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
-                                if_top,
-                                keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                                CrawlTime,
-                                Hidden, file_name, file_path)
-                            # 入库mssql
-                            data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                             self.project_name)
-
-        if "https://talk.ltn.com.tw/article" in detail_url:
-            st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
-            html = etree.HTML(con)
-            pub_time = self.get_pub_time(html)
-            pub_date_time = now_datetime_no()
-            if pub_time < pub_date_time:
-                log.info("数据不是最新" + pub_time)
-                hset_md5_filter(md5, self.mmd5)
-            else:
-                image_url = self.get_image_url_2(html)
-                caption = self.get_caption_2(html)
+                caption = self.get_caption(html)
                 if st:
                     contents_html = self.get_content_html(con)
                     if not contents_html:
@@ -220,6 +161,7 @@ class LtnSpider(object):
                             r_i = update_img(ii)
                             img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
                             content_text = img_ + contents_html
+
                         else:
                             content_text = contents_html
                         content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace(
@@ -256,7 +198,67 @@ class LtnSpider(object):
                             Hidden, file_name, file_path)
                         # 入库mssql
                         data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                         self.project_name)
+                                          self.project_name)
+
+        if "https://talk.ltn.com.tw/article" in detail_url:
+            st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
+            html = etree.HTML(con)
+            pub_time = self.get_pub_time(html)
+            pub_date_time = now_datetime_no()
+            # if pub_time < pub_date_time:
+            #     log.info("数据不是最新" + pub_time)
+            #     hset_md5_filter(md5, self.mmd5)
+            # else:
+            image_url = self.get_image_url_2(html)
+            caption = self.get_caption_2(html)
+            if st:
+                contents_html = self.get_content_html(con)
+                if not contents_html:
+                    pass
+                else:
+                    if image_url:
+                        ii = get_image(image_url)
+                        r_i = update_img(ii)
+                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                        content_text = img_ + contents_html
+                    else:
+                        content_text = contents_html
+                    content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace(
+                        "<p></p>",
+                        "")
+                    spider_time = now_datetime()
+                    body = content_text
+                    cn_title = title
+                    create_time = spider_time
+                    group_name = column_first
+                    update_time = spider_time
+                    website = detail_url
+                    Uri = detail_url
+                    Language = "zh"
+                    DocTime = pub_time
+                    CrawlTime = spider_time
+                    Hidden = 0  # 去确认
+                    file_name = ""
+                    file_path = ""
+                    classification = ""
+                    cn_boty = ''
+                    column_id = ''
+                    creator = 0
+                    if_top = 0
+                    source_id = source_id
+                    summary = ''
+                    UriId = ''
+                    keyword = ''
+                    info_val = (
+                        body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
+                        if_top,
+                        keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                        CrawlTime,
+                        Hidden, file_name, file_path)
+                    # 入库mssql
+                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                      self.project_name)
+
 
     # TODO 内容格式化
     def get_content_html(self, html):
@@ -317,6 +319,7 @@ class LtnSpider(object):
 
         return content_text
 
+
     # TODO 图片url
     def get_image_url(self, html):
         try:
@@ -329,6 +332,7 @@ class LtnSpider(object):
             image_url = ""
         return image_url
 
+
     def get_caption(self, html):
         try:
             caption = html.xpath('//div[@class="photo boxTitle"]/a/img/@title')[0]
@@ -338,6 +342,7 @@ class LtnSpider(object):
             print(e)
             caption = ""
         return caption
+
 
     def get_pub_time(self, html):
         try:
@@ -350,6 +355,7 @@ class LtnSpider(object):
             pub_time = now_datetime()
         return pub_time
 
+
     def get_image_url_2(self, html):
         try:
             image_url = html.xpath('//span[@class="ph_b ph_d1"]/span[@class="ph_i"]//img/@data-original')[0]
@@ -360,6 +366,7 @@ class LtnSpider(object):
             print(e)
             image_url = ""
         return image_url
+
 
     def get_caption_2(self, html):
         try:

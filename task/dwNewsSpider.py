@@ -76,7 +76,8 @@ class DwNewsSpider(object):
                             # 详情页url
                         detail_url_code = str(format_info_int_re(detail_url))
                         if hexists_md5_filter(md5, self.mmd5):
-                            log.info(self.project_name + " info data already exists!")
+                            pass
+                            #log.info(self.project_name + " info data already exists!")
                         else:
                             main_category = item.get('data').get('mainCategory')
                             # 缩略图

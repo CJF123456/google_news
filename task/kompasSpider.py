@@ -82,7 +82,8 @@ class KompasSpider(object):
                     md5_ = detail_url
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
-                        log.info(self.project_name + " info data already exists!")
+                        pass
+                        #log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
                             self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,

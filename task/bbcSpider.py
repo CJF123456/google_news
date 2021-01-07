@@ -82,7 +82,8 @@ class BbcSpider(object):
                     md5_ = detail_url
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
-                        log.info(self.project_name + " info data already exists!")
+                        pass
+                       # log.info(self.project_name + " info data already exists!")
                     else:
                         url_code = detail_url.replace("https://www.bbc.com/zhongwen/simp/", "").split("-")[0]
                         url_limit_code = ["business", "world", "chinese"]
@@ -100,81 +101,81 @@ class BbcSpider(object):
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         pub_time = self.get_pub_time(con)
         pub_date_time = now_datetime_no()
-        if pub_time < pub_date_time:
-            log.info("数据不是最新" + pub_time)
-            # hset_md5_filter(md5, self.mmd5)
-        else:
-            if st:
-                html = etree.HTML(con)
-                try:
-                    img_url = html.xpath('//figure[1]//img[1]/@src')[0]
-                    img_url = "".join(img_url)
-                except Exception as e:
-                    print(e)
-                    img_url = ""
-                try:
-                    img_text = html.xpath('//main/div[3]/figure//p/text()')
-                    img_text = "".join(img_text)
-                except Exception as e:
-                    print(e)
-                    img_text = ""
-                caption = img_text
-                contents_html = self.get_content_html(con)
-                if not contents_html:
+        # if pub_time < pub_date_time:
+        #     log.info("数据不是最新" + pub_time)
+        #     # hset_md5_filter(md5, self.mmd5)
+        # else:
+        if st:
+            html = etree.HTML(con)
+            try:
+                img_url = html.xpath('//figure[1]//img[1]/@src')[0]
+                img_url = "".join(img_url)
+            except Exception as e:
+                print(e)
+                img_url = ""
+            try:
+                img_text = html.xpath('//main/div[3]/figure//p/text()')
+                img_text = "".join(img_text)
+            except Exception as e:
+                print(e)
+                img_text = ""
+            caption = img_text
+            contents_html = self.get_content_html(con)
+            if not contents_html:
+                pass
+            else:
+                if img_url:
+                    ii = get_image(img_url)
+                    r_i = update_img(ii)
+                    img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                    content_text = img_ + contents_html
+                    content_text = content_text.replace("<p><img", "<img")
+                else:
+                    content_text = contents_html
+            if "html" in content_text:
+                print("获取内容失败")
+            else:
+                spider_time = now_datetime()
+                content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
+                                                                                                         "").replace(
+                    "<p>.</p>", "")
+                body = content_text
+                if "<!DOCTYPE html>" in content_text:
                     pass
                 else:
-                    if img_url:
-                        ii = get_image(img_url)
-                        r_i = update_img(ii)
-                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                        content_text = img_ + contents_html
-                        content_text = content_text.replace("<p><img", "<img")
-                    else:
-                        content_text = contents_html
-                if "html" in content_text:
-                    print("获取内容失败")
-                else:
-                    spider_time = now_datetime()
-                    content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
-                                                                                                             "").replace(
-                        "<p>.</p>", "")
-                    body = content_text
-                    if "<!DOCTYPE html>" in content_text:
-                        pass
-                    else:
-                        cn_title = title
-                        create_time = spider_time
-                        group_name = column_first
-                        title = title
-                        update_time = spider_time
-                        website = detail_url
-                        Uri = detail_url
-                        Language = "zh"
-                        DocTime = pub_time
-                        CrawlTime = spider_time
-                        Hidden = 0  # 去确认
-                        file_name = ""
-                        file_path = ""
-                        classification = ""
-                        cn_boty = ""
-                        column_id = ''
-                        creator = 0
-                        if_top = 0
-                        source_id = source_id
-                        summary = ''
-                        UriId = ''
-                        keyword = ''
-                        info_val = (
-                            body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
-                            if_top,
-                            keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                            CrawlTime,
-                            Hidden, file_name, file_path)
-                        # 入库mssql
-                        data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                          self.project_name)
-            else:
-                pass
+                    cn_title = title
+                    create_time = spider_time
+                    group_name = column_first
+                    title = title
+                    update_time = spider_time
+                    website = detail_url
+                    Uri = detail_url
+                    Language = "zh"
+                    DocTime = pub_time
+                    CrawlTime = spider_time
+                    Hidden = 0  # 去确认
+                    file_name = ""
+                    file_path = ""
+                    classification = ""
+                    cn_boty = ""
+                    column_id = ''
+                    creator = 0
+                    if_top = 0
+                    source_id = source_id
+                    summary = ''
+                    UriId = ''
+                    keyword = ''
+                    info_val = (
+                        body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
+                        if_top,
+                        keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                        CrawlTime,
+                        Hidden, file_name, file_path)
+                    # 入库mssql
+                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                      self.project_name)
+        else:
+            pass
 
     def get_pub_time(self, con):
         global pub_time
