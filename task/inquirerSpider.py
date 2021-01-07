@@ -179,159 +179,159 @@ class InquirerSpider(object):
                     pass
 
 
-# # TODO 内容格式化
-# def get_content_html(self, html):
-#     global con, con_html
-#     if 'class="gmail_quote"' in html:
-#         soup = BeautifulSoup(html, 'lxml')
-#         con_htmls = []
-#         for divcon in soup.select('div.gmail_quote'):
-#             [s.extract() for s in divcon("script")]
-#             [s.extract() for s in divcon("style")]
-#             [s.extract() for s in divcon("div")]
-#             [s.extract() for s in divcon("iframe")]
-#             [s.extract() for s in divcon("<!-->")]
-#             [s.extract() for s in divcon("h6")]
-#             [s.extract() for s in divcon("i")]
-#             # [s.extract() for s in divcon('figure')]
-#             [s.extract() for s in divcon.find_all("style", {"type": "text/css"})]
-#             locu_content = divcon.prettify()
-#             con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
-#             con = self.filter_html_clear_format(con)
-#             con = con.replace("  ", "")
-#             con_html = self.cn_replace_html(con)
-#             con_html = "".join(cat_to_chs(con_html))
-#             con_html = con_html.split("<!-->")[0]
-#             con_html = format_content_p(con_html)
-#             con_htmls.append(con_html)
-#             break
-#         content_text = "".join(con_htmls)
-#         content_text = all_tag_replace_html(content_text)
-#         if "&amp;" in content_text:
-#             content_text = content_text.replace("&amp;", "&")
-#         if "<p>VIDEO</p>" in content_text:
-#             content_text = content_text.split("<p>VIDEO")[0]
-#         if "<p>—————" in content_text:
-#             content_text = content_text.split("<p>—————")[0]
-#     else:
-#         soup = BeautifulSoup(html, 'lxml')
-#         con_htmls = []
-#         for divcon in soup.select('div#article_content>div'):
-#             [s.extract() for s in divcon("script")]
-#             [s.extract() for s in divcon("style")]
-#             [s.extract() for s in divcon("iframe")]
-#             [s.extract() for s in divcon("<!-->")]
-#             [s.extract() for s in divcon("h6")]
-#             [s.extract() for s in divcon("i")]
-#             [s.extract() for s in divcon("div")]
-#             [s.extract() for s in divcon.find_all("style", {"type": "text/css"})]
-#             locu_content = divcon.prettify()
-#             con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
-#             con = self.filter_html_clear_format(con)
-#             con = con.replace("  ", "")
-#             con_html = self.cn_replace_html(con)
-#             con_html = "".join(cat_to_chs(con_html))
-#             con_html = con_html.split("<!-->")[0]
-#             con_html = format_content_p(con_html)
-#             con_htmls.append(con_html)
-#             break
-#         content_text = "".join(con_htmls)
-#         content_text = all_tag_replace_html(content_text)
-#         if "&amp;" in content_text:
-#             content_text = content_text.replace("&amp;", "&")
-#         if "<p>VIDEO</p>" in content_text:
-#             content_text = content_text.split("<p>VIDEO")[0]
-#         if "<p>—————" in content_text:
-#             content_text = content_text.split("<p>—————")[0]
-#     content_text = content_text.replace("<p><p>", "<p>"). \
-#         replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
-#         "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>", "</p>")
-#     if "<p>Click here" in content_text:
-#         content_text = content_text.split("<p>Click here")[0]
-#     return content_text
-#
-#
-# # TODO 图片url
-# def get_image_url(self, html):
-#     try:
-#         image_url = html.xpath('//div[@class="wp-caption aligncenter"]//img[1]/@data-src')[0]
-#         image_url = "".join(image_url)
-#     except Exception as e:
-#         print(e)
-#         image_url = ""
-#     return image_url
-#
-#
-# def get_caption(self, html):
-#     try:
-#         caption = html.xpath('//div[@class="wp-caption aligncenter"]/p[@class="wp-caption-text"]/text()')[0]
-#         caption = "".join(caption)
-#         if "©" in caption:
-#             caption = caption.split("©")[0].strip()
-#     except Exception as e:
-#         print(e)
-#         caption = ""
-#     return caption
-#
-#
-# def get_pub_time(self, html):
-#     global pub_el
-#     try:
-#         pub_time_el = html.xpath('//div[@id="byline"]/div[@id="art_plat"]/text()')
-#         pub_el = "".join(pub_time_el)
-#         pub_time_ = pub_el.replace("/", "").lstrip().strip()
-#         pub_time_list = pub_time_.split(" ")
-#         hour_mis = pub_time_list[0]
-#         mp = pub_time_list[1]
-#         month_ = pub_time_list[2]
-#         day_ = pub_time_list[3].replace(",", "")
-#         year_ = pub_time_list[4]
-#         hour_mis = hour_mis + " " + mp
-#         mis = self.get_date_am_pm(hour_mis)
-#         month = get_month_en(month_)
-#         pub_time = year_ + "-" + month + "-" + day_ + " " + mis
-#     except Exception  as e:
-#         print(e)
-#         pub_time = now_datetime_no()
-#     return pub_time
-#
-#
-# def filter_html_clear_format(self, format_info):
-#     if format_info:
-#         format_info = format_info.replace('<div>', '').replace('</div>', '').replace('<span>', '').replace(
-#             '</span>', '').replace('<button>', '').replace('</button>', ''). \
-#             replace('<svg>', '').replace('</svg>', '').replace('<figure>', '').replace('</figure>', '') \
-#             .replace('<figcaption>', '').replace('</figcaption>', '') \
-#             .replace('<path>', '').replace('</path>', '') \
-#             .strip().replace('\r', '').replace('\n', '').replace('+<!-->3+<!-->2', '')
-#         format_info = format_info.replace("</p><p>", "</p>\n<p>").replace("<picture>", "") \
-#             .replace("</picture>", "").replace("<img>", "").replace("<a>", "").replace("</a>", "") \
-#             .replace("<b>", "").replace("</b>", "").replace("<main>", "").replace("</main>", "") \
-#             .replace("<ul>", "").replace("</ul>", "").replace("<p></p>", "").replace("<i>", "").replace("</i>", '')
-#     if "Read Next" in format_info:
-#         format_info = format_info.split("Read Next")[0]
-#     elif "RELATED STORY" in format_info:
-#         format_info = format_info.split("RELATED STORY")[0]
-#     elif "<p>更多" in format_info:
-#         format_info = format_info.split("<p>更多")[0]
-#
-#     return format_info
-#
-#
-# def get_date_am_pm(self, info_):
-#     global num
-#     if ":" in info_:
-#         hour = info_.split(" ")[0].split(":")[0]
-#         mis = info_.split(" ")[0].split(":")[1]
-#         mp = info_.split(" ")[1]
-#         if "am" in mp or "AM" in mp:
-#             num = info_.replace("am", "").strip()
-#         else:
-#             num = int(hour) + 12
-#             num = str(num) + ":" + mis
-#     else:
-#         num = ""
-#     return num
+    # TODO 内容格式化
+    def get_content_html(self, html):
+        global con, con_html
+        if 'class="gmail_quote"' in html:
+            soup = BeautifulSoup(html, 'lxml')
+            con_htmls = []
+            for divcon in soup.select('div.gmail_quote'):
+                [s.extract() for s in divcon("script")]
+                [s.extract() for s in divcon("style")]
+                [s.extract() for s in divcon("div")]
+                [s.extract() for s in divcon("iframe")]
+                [s.extract() for s in divcon("<!-->")]
+                [s.extract() for s in divcon("h6")]
+                [s.extract() for s in divcon("i")]
+                # [s.extract() for s in divcon('figure')]
+                [s.extract() for s in divcon.find_all("style", {"type": "text/css"})]
+                locu_content = divcon.prettify()
+                con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
+                con = self.filter_html_clear_format(con)
+                con = con.replace("  ", "")
+                con_html = self.cn_replace_html(con)
+                con_html = "".join(cat_to_chs(con_html))
+                con_html = con_html.split("<!-->")[0]
+                con_html = format_content_p(con_html)
+                con_htmls.append(con_html)
+                break
+            content_text = "".join(con_htmls)
+            content_text = all_tag_replace_html(content_text)
+            if "&amp;" in content_text:
+                content_text = content_text.replace("&amp;", "&")
+            if "<p>VIDEO</p>" in content_text:
+                content_text = content_text.split("<p>VIDEO")[0]
+            if "<p>—————" in content_text:
+                content_text = content_text.split("<p>—————")[0]
+        else:
+            soup = BeautifulSoup(html, 'lxml')
+            con_htmls = []
+            for divcon in soup.select('div#article_content>div'):
+                [s.extract() for s in divcon("script")]
+                [s.extract() for s in divcon("style")]
+                [s.extract() for s in divcon("iframe")]
+                [s.extract() for s in divcon("<!-->")]
+                [s.extract() for s in divcon("h6")]
+                [s.extract() for s in divcon("i")]
+                [s.extract() for s in divcon("div")]
+                [s.extract() for s in divcon.find_all("style", {"type": "text/css"})]
+                locu_content = divcon.prettify()
+                con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
+                con = self.filter_html_clear_format(con)
+                con = con.replace("  ", "")
+                con_html = self.cn_replace_html(con)
+                con_html = "".join(cat_to_chs(con_html))
+                con_html = con_html.split("<!-->")[0]
+                con_html = format_content_p(con_html)
+                con_htmls.append(con_html)
+                break
+            content_text = "".join(con_htmls)
+            content_text = all_tag_replace_html(content_text)
+            if "&amp;" in content_text:
+                content_text = content_text.replace("&amp;", "&")
+            if "<p>VIDEO</p>" in content_text:
+                content_text = content_text.split("<p>VIDEO")[0]
+            if "<p>—————" in content_text:
+                content_text = content_text.split("<p>—————")[0]
+        content_text = content_text.replace("<p><p>", "<p>"). \
+            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
+            "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>", "</p>")
+        if "<p>Click here" in content_text:
+            content_text = content_text.split("<p>Click here")[0]
+        return content_text
+
+
+    # TODO 图片url
+    def get_image_url(self, html):
+        try:
+            image_url = html.xpath('//div[@class="wp-caption aligncenter"]//img[1]/@data-src')[0]
+            image_url = "".join(image_url)
+        except Exception as e:
+            print(e)
+            image_url = ""
+        return image_url
+
+
+    def get_caption(self, html):
+        try:
+            caption = html.xpath('//div[@class="wp-caption aligncenter"]/p[@class="wp-caption-text"]/text()')[0]
+            caption = "".join(caption)
+            if "©" in caption:
+                caption = caption.split("©")[0].strip()
+        except Exception as e:
+            print(e)
+            caption = ""
+        return caption
+
+
+    def get_pub_time(self, html):
+        global pub_el
+        try:
+            pub_time_el = html.xpath('//div[@id="byline"]/div[@id="art_plat"]/text()')
+            pub_el = "".join(pub_time_el)
+            pub_time_ = pub_el.replace("/", "").lstrip().strip()
+            pub_time_list = pub_time_.split(" ")
+            hour_mis = pub_time_list[0]
+            mp = pub_time_list[1]
+            month_ = pub_time_list[2]
+            day_ = pub_time_list[3].replace(",", "")
+            year_ = pub_time_list[4]
+            hour_mis = hour_mis + " " + mp
+            mis = self.get_date_am_pm(hour_mis)
+            month = get_month_en(month_)
+            pub_time = year_ + "-" + month + "-" + day_ + " " + mis
+        except Exception  as e:
+            print(e)
+            pub_time = now_datetime_no()
+        return pub_time
+
+
+    def filter_html_clear_format(self, format_info):
+        if format_info:
+            format_info = format_info.replace('<div>', '').replace('</div>', '').replace('<span>', '').replace(
+                '</span>', '').replace('<button>', '').replace('</button>', ''). \
+                replace('<svg>', '').replace('</svg>', '').replace('<figure>', '').replace('</figure>', '') \
+                .replace('<figcaption>', '').replace('</figcaption>', '') \
+                .replace('<path>', '').replace('</path>', '') \
+                .strip().replace('\r', '').replace('\n', '').replace('+<!-->3+<!-->2', '')
+            format_info = format_info.replace("</p><p>", "</p>\n<p>").replace("<picture>", "") \
+                .replace("</picture>", "").replace("<img>", "").replace("<a>", "").replace("</a>", "") \
+                .replace("<b>", "").replace("</b>", "").replace("<main>", "").replace("</main>", "") \
+                .replace("<ul>", "").replace("</ul>", "").replace("<p></p>", "").replace("<i>", "").replace("</i>", '')
+        if "Read Next" in format_info:
+            format_info = format_info.split("Read Next")[0]
+        elif "RELATED STORY" in format_info:
+            format_info = format_info.split("RELATED STORY")[0]
+        elif "<p>更多" in format_info:
+            format_info = format_info.split("<p>更多")[0]
+
+        return format_info
+
+
+    def get_date_am_pm(self, info_):
+        global num
+        if ":" in info_:
+            hour = info_.split(" ")[0].split(":")[0]
+            mis = info_.split(" ")[0].split(":")[1]
+            mp = info_.split(" ")[1]
+            if "am" in mp or "AM" in mp:
+                num = info_.replace("am", "").strip()
+            else:
+                num = int(hour) + 12
+                num = str(num) + ":" + mis
+        else:
+            num = ""
+        return num
 
 
 if __name__ == '__main__':
