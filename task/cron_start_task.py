@@ -55,7 +55,7 @@ def scheduled_job_parse_id():
     log.info("parse_id info end" + now_datetime())
 
 
-@sched.scheduled_job('cron', day_of_week='mon-sun', hour='6,10,18,23', minute=42)
+@sched.scheduled_job('cron', day_of_week='mon-sun', hour='6,10,18,23', minute=53)
 def scheduled_job_parse_cn():
     log.info("parse_cn info start" + now_datetime())
     parse_cn()
