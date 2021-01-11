@@ -119,80 +119,80 @@ class RepublikaSpider(object):
                     title = title_
                 pub_time = self.get_pub_time(html)
                 pub_date_time = now_datetime_no()
-                if pub_time < pub_date_time:
-                    log.info("数据不是最新" + pub_time)
-                    hset_md5_filter(md5, self.mmd5)
+                # if pub_time < pub_date_time:
+                #     log.info("数据不是最新" + pub_time)
+                #     hset_md5_filter(md5, self.mmd5)
+                # else:
+                image_url = self.get_image_url(html)
+                caption = self.get_caption(html)
+                subhead = self.get_subhead(html)
+                contents_html = subhead + self.get_content_html(con)
+                cn_title = translated_cn(title, 'id')
+                if not contents_html:
+                    pass
                 else:
-                    image_url = self.get_image_url(html)
-                    caption = self.get_caption(html)
-                    subhead = self.get_subhead(html)
-                    contents_html = subhead + self.get_content_html(con)
-                    cn_title = translated_cn(title, 'id')
-                    if not contents_html:
-                        pass
+                    if caption:
+                        cn_caption = translated_cn(caption, 'id')
                     else:
-                        if caption:
-                            cn_caption = translated_cn(caption, 'id')
+                        cn_caption = ""
+                    cn_content_ = en_con_to_cn_con(contents_html, 'id')
+                    if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
+                        if image_url:
+                            ii = get_image(image_url)
+                            r_i = update_img(ii)
+                            img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                            content_text = img_ + contents_html
+                            cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
+                            cn_content_text = cn_img_ + cn_content_
                         else:
-                            cn_caption = ""
-                        cn_content_ = en_con_to_cn_con(contents_html, 'id')
-                        if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
-                            if image_url:
-                                ii = get_image(image_url)
-                                r_i = update_img(ii)
-                                img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                                content_text = img_ + contents_html
-                                cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
-                                cn_content_text = cn_img_ + cn_content_
-                            else:
-                                content_text = contents_html
-                                cn_content_text = cn_content_
-                            content_text = content_text.replace("<p><p>", "<p>"). \
-                                replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                                "<p></p>",
-                                "").replace(
-                                "<p>  </p>", "").replace("<p>   </p>", "")
-                            cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
-                                replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                                "<p></p>", "").replace("<p>  </p>", "").replace("<p>   </p>", "")
-                            spider_time = now_datetime()
-                            body = content_text
-                            cn_title = cn_title
-                            create_time = spider_time
-                            group_name = column_first
-                            update_time = spider_time
-                            website = detail_url
-                            Uri = detail_url
-                            Language = "zh"
-                            DocTime = pub_time
-                            CrawlTime = spider_time
-                            Hidden = 0  # 去确认
-                            file_name = ""
-                            file_path = ""
-                            classification = ""
-                            cn_boty = cn_content_text
-                            column_id = ''
-                            creator = 0
-                            if_top = 0
-                            source_id = source_id
-                            summary = ''
-                            UriId = ''
-                            keyword = ''
-                            info_val = (
-                                body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
-                                if_top,
-                                keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                                CrawlTime,
-                                Hidden, file_name, file_path)
-                            # 入库mssql
-                            data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                              self.project_name)
-                        else:
-                            pass
-            else:
-                log.info('title spider fail.')
+                            content_text = contents_html
+                            cn_content_text = cn_content_
+                        content_text = content_text.replace("<p><p>", "<p>"). \
+                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
+                            "<p></p>",
+                            "").replace(
+                            "<p>  </p>", "").replace("<p>   </p>", "")
+                        cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
+                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
+                            "<p></p>", "").replace("<p>  </p>", "").replace("<p>   </p>", "")
+                        spider_time = now_datetime()
+                        body = content_text
+                        cn_title = cn_title
+                        create_time = spider_time
+                        group_name = column_first
+                        update_time = spider_time
+                        website = detail_url
+                        Uri = detail_url
+                        Language = "zh"
+                        DocTime = pub_time
+                        CrawlTime = spider_time
+                        Hidden = 0  # 去确认
+                        file_name = ""
+                        file_path = ""
+                        classification = ""
+                        cn_boty = cn_content_text
+                        column_id = ''
+                        creator = 0
+                        if_top = 0
+                        source_id = source_id
+                        summary = ''
+                        UriId = ''
+                        keyword = ''
+                        info_val = (
+                            body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
+                            if_top,
+                            keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                            CrawlTime,
+                            Hidden, file_name, file_path)
+                        # 入库mssql
+                        data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                          self.project_name)
+                    else:
+                        pass
         else:
-            pass
+            log.info('title spider fail.')
+
+
 
     # TODO 内容格式化
     def get_content_html(self, html):
@@ -221,6 +221,7 @@ class RepublikaSpider(object):
             content_text = content_text.replace("<p>. </p>", "")
         return content_text
 
+
     # TODO 图片url
     def get_image_url(self, html):
         try:
@@ -230,6 +231,7 @@ class RepublikaSpider(object):
             print(e)
             image_url = ""
         return image_url
+
 
     def get_caption(self, html):
         try:
@@ -242,6 +244,7 @@ class RepublikaSpider(object):
             caption = ""
         return caption
 
+
     # //div[@class="taiching"]/b/text()
     def get_subhead(self, html):
         try:
@@ -252,6 +255,7 @@ class RepublikaSpider(object):
             print(e)
             subhead = ""
         return subhead
+
 
     def get_pub_time(self, html):
         global pub_el
@@ -269,6 +273,7 @@ class RepublikaSpider(object):
             log.info(e)
             pub_time = now_datetime_no()
         return pub_time
+
 
     def filter_html_clear_format(self, format_info):
         if format_info:
@@ -293,6 +298,7 @@ class RepublikaSpider(object):
 
         return format_info
 
+
     def get_date_am_pm(self, info_):
         global num
         if ":" in info_:
@@ -307,6 +313,7 @@ class RepublikaSpider(object):
         else:
             num = ""
         return num
+
 
     def get_title(self, con):
         global con_html
