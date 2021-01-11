@@ -126,7 +126,7 @@ class AnsaSpider(object):
                 else:
                     cn_caption = ""
                 cn_content_ = en_con_to_cn_con(contents_html, 'it')
-                if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 3:
+                if cn_content_ and cn_title:
                     if image_url:
                         image_url = self.first_url + image_url
                         ii = get_image(image_url)
@@ -182,7 +182,6 @@ class AnsaSpider(object):
                     log.info("翻译异常len(cn_content_)：" + str(len(cn_content_)))
                     log.info(cn_content_)
 
-
     # TODO 替换各种不用的标签
     def filter_html_clear_format(self, format_info):
         if format_info:
@@ -199,7 +198,6 @@ class AnsaSpider(object):
                                                                                                             '').replace(
                 "<br/>", '<p>')
         return format_info
-
 
     # TODO 内容格式化
     def get_content_html(self, html):
@@ -228,7 +226,6 @@ class AnsaSpider(object):
             "<p>  </p>", "").replace("<p>   </p>", "")
         return content_text
 
-
     # TODO 图片url
     def get_image_url(self, html):
         try:
@@ -240,7 +237,6 @@ class AnsaSpider(object):
             image_url = ""
         return image_url
 
-
     def get_caption(self, html):
         try:
             caption = html.xpath('//div[@class="news-caption hidden-phone"]/em/text()')[0]
@@ -251,7 +247,6 @@ class AnsaSpider(object):
             print(e)
             caption = ""
         return caption
-
 
     def get_pub_time(self, con):
         global pub_el, pub_time_, date_
@@ -302,7 +297,6 @@ class AnsaSpider(object):
                 time_ = now_time()
             pub_time = date_ + " " + time_ + ":00"
         return pub_time
-
 
     def get_month_ydl(self, month):
         if "ottobre" in month:
