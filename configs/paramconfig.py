@@ -8,7 +8,17 @@
 import sys
 sys.path.append('..')
 
-#################################### log config #########################################
-#log_dir = 'D:/logs/'
-log_dir = '/data/logs/'
-# log_dir = '/Users/chenjianfeng/Documents/logs/'
+import sys
+
+
+def get_log_dir():
+    os_name = sys.platform
+    if "darwin" in os_name:
+        log_dir = '/Users/chengjianfeng/Documents/logs/'
+    elif "win32" in os_name:
+        log_dir = 'D:/logs/'
+    elif "linux" in os_name:
+        log_dir = '/data/logs/'
+    else:
+        log_dir = '/data/logs/'
+    return log_dir
