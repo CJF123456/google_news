@@ -217,21 +217,20 @@ class NedSpider(object):
             con_ = self.filter_html_clear_format(con_)
             con = con_.replace("  ", "")
             con_html = self.cn_replace_html(con)
-            con_html = "".join(cat_to_chs(con_html))
             con_html = format_content_p(con_html)
             con_htmls.append(con_html)
         content_text = "".join(con_htmls)
         content_text = all_tag_replace_html(content_text)
-        content_text = "".join(content_text.split())
         if "&amp;" in content_text:
             content_text = content_text.replace("&amp;", "&")
         if "\xa0" in content_text:
             content_text = content_text.replace("\xa0", " ")
-        content_text = content_text.replace("<p><p>", "<p>"). \
-            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
-            "<p>  </p>", "").replace("<p>   </p>", "").replace("<p></p>", "").replace("   ", "").replace("  ",
-                                                                                                         "").replace(
-            "<hr/>", "")
+        if __name__ == '__main__':
+            content_text = content_text.replace("<p><p>", "<p>"). \
+                replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
+                "<p>  </p>", "").replace("<p>   </p>", "").replace("<p></p>", "").replace(
+                "<hr/>", "").replace("        ","").replace("       ","").replace("     ","").replace("   ","").replace("﻿ ","")\
+                .replace("<p> ﻿</p>","").replace("<p> </p>","")
         if "<p>Event Program" in content_text:
             content_text = content_text.split("<p>Event Program")[0]
         return content_text
