@@ -18,7 +18,7 @@ def get_log_dir():
     elif "win32" in os_name:
         log_dir = 'D:/logs/'
     elif "linux" in os_name:
-        log_dir = '/data/logs/'
+        log_dir = '/data/logs/jobs/'
     else:
         log_dir = '/data/logs/'
     return log_dir
