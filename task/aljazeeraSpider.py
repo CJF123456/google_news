@@ -120,76 +120,77 @@ class AljazeeraSpider(object):
             html = etree.HTML(con)
             pub_time = self.pub_time_html(html)
             pub_date_time = now_datetime_no()
-            if pub_time < pub_date_time:
-                log.info("数据不是最新" + pub_time)
-                hset_md5_filter(md5, self.mmd5)
+            # if pub_time < pub_date_time:
+            #     log.info("数据不是最新" + pub_time)
+            #     hset_md5_filter(md5, self.mmd5)
+            # else:
+            image_url = self.get_image_url(html)
+            title = self.get_title_html(html)
+            cn_title = translated_cn(title, 'en')
+            subhead = self.get_subhead_text(html)
+            caption = self.get_caption_html(html)
+            if caption:
+                cn_caption = translated_cn(caption, 'en')
             else:
-                image_url = self.get_image_url(html)
-                title = self.get_title_html(html)
-                cn_title = translated_cn(title, 'en')
-                subhead = self.get_subhead_text(html)
-                caption = self.get_caption_html(html)
-                if caption:
-                    cn_caption = translated_cn(caption, 'en')
-                else:
-                    cn_caption = ""
-                content_ = subhead + self.get_content_html(con)
-                if not content_:
-                    pass
-                else:
-                    cn_content_ = en_con_to_cn_con(content_, 'en')
-                    if cn_content_ and cn_title and len(cn_content_) > len(content_) / 4:
-                        if image_url:
-                            image_url = self.first_url + image_url
-                            ii = get_image(image_url)
-                            r_i = update_img(ii)
-                            img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                            content_text = img_ + content_
-                            cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
-                            cn_content_text = cn_img_ + cn_content_
-                        else:
-                            content_text = content_
-                            cn_content_text = cn_content_
-                        content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace(
-                            "<p></p>",
-                            "")
-                        cn_content_text = cn_content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace(
-                            "<p></p>", "")
-                        spider_time = now_datetime()
-                        # 采集时间
-                        body = content_text
-                        cn_title = cn_title
-                        create_time = spider_time
-                        group_name = column_first
-                        update_time = spider_time
-                        website = detail_url
-                        Uri = detail_url
-                        Language = "zh"
-                        DocTime = pub_time
-                        CrawlTime = spider_time
-                        Hidden = 0  # 去确认
-                        file_name = ""
-                        file_path = ""
-                        classification = ""
-                        cn_boty = cn_content_text
-                        column_id = ''
-                        creator = 0
-                        if_top = 0
-                        source_id = source_id
-                        summary = ''
-                        UriId = ''
-                        keyword = ''
-                        info_val = (
-                            body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
-                            if_top,
-                            keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                            CrawlTime,
-                            Hidden, file_name, file_path)
-                        # 入库mssql
-                        data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                          self.project_name)
+                cn_caption = ""
+            content_ = subhead + self.get_content_html(con)
+            if not content_:
+                pass
+            else:
+                cn_content_ = en_con_to_cn_con(content_, 'en')
+                if cn_content_ and cn_title and len(cn_content_) > len(content_) / 4:
+                    if image_url:
+                        image_url = self.first_url + image_url
+                        ii = get_image(image_url)
+                        r_i = update_img(ii)
+                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                        content_text = img_ + content_
+                        cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
+                        cn_content_text = cn_img_ + cn_content_
                     else:
-                        pass
+                        content_text = content_
+                        cn_content_text = cn_content_
+                    content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace(
+                        "<p></p>",
+                        "")
+                    cn_content_text = cn_content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace(
+                        "<p></p>", "")
+                    spider_time = now_datetime()
+                    # 采集时间
+                    body = content_text
+                    cn_title = cn_title
+                    create_time = spider_time
+                    group_name = column_first
+                    update_time = spider_time
+                    website = detail_url
+                    Uri = detail_url
+                    Language = "zh"
+                    DocTime = pub_time
+                    CrawlTime = spider_time
+                    Hidden = 0  # 去确认
+                    file_name = ""
+                    file_path = ""
+                    classification = ""
+                    cn_boty = cn_content_text
+                    column_id = ''
+                    creator = 0
+                    if_top = 0
+                    source_id = source_id
+                    summary = ''
+                    UriId = ''
+                    keyword = ''
+                    info_val = (
+                        body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
+                        if_top,
+                        keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                        CrawlTime,
+                        Hidden, file_name, file_path)
+                    # 入库mssql
+                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                      self.project_name)
+                else:
+                    pass
+
         else:
             pass
 
