@@ -1,11 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Time    : 2020-09-09 9:55
-# @Author  : cjf
-# @Version : 1.0
-# @File    : newsSpider.py
-# @Software: PyCharm
-# @Desc    : None
+# coding=utf-8
+# __author__ = 'wangning'
 
 import sys
 
@@ -13,9 +7,10 @@ sys.path.append('..')
 import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
-from configs.paramconfig import log_dir
+from configs.paramconfig import get_log_dir
 
 logger_dict = {}
+
 
 class logger(object):
 
@@ -24,7 +19,8 @@ class logger(object):
             log = logging.getLogger()
             formatter = logging.Formatter(
                 '%(asctime)-12s level-%(levelname)-8s thread-%(thread)-8d %(message)s')  # 每行日志的前缀设置
-            fileTimeHandler = TimedRotatingFileHandler(log_dir + str(logname), when="M", interval=15, backupCount=288)
+            fileTimeHandler = TimedRotatingFileHandler(get_log_dir() + str(logname), when="M", interval=15,
+                                                       backupCount=288)
             logging.basicConfig(level=logging.INFO)
             fileTimeHandler.setFormatter(formatter)
             log.addHandler(fileTimeHandler)
@@ -48,5 +44,8 @@ class logger(object):
 
 
 project_name_ = os.path.abspath(os.path.join(os.getcwd(), ".."))
-project_name = project_name_.split("\\")[-1] + ".log"
+if "/" in project_name_:
+    project_name = project_name_.split("/")[-1] + ".log"
+else:
+    project_name = project_name_.split("\\")[-1] + ".log"
 log = logger(project_name)
