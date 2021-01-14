@@ -21,7 +21,7 @@ from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import filter_html_clear_format, format_content_p, \
-    all_tag_replace_html
+    all_tag_replace_html, format_p_null
 from utils.timeUtil import now_datetime, now_datetime_no
 from utils.translate import cat_to_chs
 
@@ -166,10 +166,6 @@ class UdnSpider(object):
                         content_text = img_ + contents_html
                     else:
                         content_text = contents_html
-                    content_text = content_text.replace("<p><p>", "<p>"). \
-                        replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
-                                                                                                           "").replace(
-                        "<p>  </p>", "").replace("<p>   </p>", "").replace("\n", "").strip()
                     spider_time = now_datetime()
                     body = content_text
                     if "<!--" in body:
@@ -232,6 +228,7 @@ class UdnSpider(object):
         content_text = "".join(con_htmls)
         content_text = all_tag_replace_html(content_text)
         content_text = content_text.split("<p>文章授权转载")[0]
+        content_text = format_p_null(content_text)
         return content_text
 
     # TODO 图片url

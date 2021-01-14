@@ -21,7 +21,7 @@ from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import format_content_p, \
-    all_tag_replace_html
+    all_tag_replace_html, format_p_null
 from utils.timeUtil import now_datetime, now_time, format_string_datetime, now_datetime_no
 from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import get_image, update_img
@@ -227,7 +227,7 @@ class DwzhSpider(object):
             if "系列报道说明：" in content:
                 content = content.split("系列报道说明：")[0]
             content = format_content_p(content)
-            content = content.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
+            content_text = format_p_null(content_text)
         return content
 
 

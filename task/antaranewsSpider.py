@@ -18,7 +18,7 @@ from configs import useragents
 from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
-from utils.datautil import all_tag_replace_html
+from utils.datautil import all_tag_replace_html, format_p_null
 from utils.timeUtil import now_datetime, now_datetime_no
 from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import get_image, update_img
@@ -82,7 +82,7 @@ class AntaranewsSpider(object):
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         pass
-                        #log.info(self.project_name + " info data already exists!")
+                        # log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
                             self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
@@ -181,7 +181,6 @@ class AntaranewsSpider(object):
         else:
             pass
 
-
     # TODO 内容格式化
     def get_content_html(self, html):
         global con, con_html
@@ -227,18 +226,12 @@ class AntaranewsSpider(object):
                 content_text = content_text.replace("&amp;", "&")
             if "<p>Pewarta" in content_text:
                 content_text = content_text.split("<p>Pewarta")[0]
-            content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
         if content_text:
-            content_text = content_text.replace("<p><p>", "<p>"). \
-                replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                "<p></p>",
-                "").replace(
-                "<p>  </p>", "").replace("<p>   </p>", "")
+            content_text = format_p_null(content_text)
         else:
             content_text = ""
 
         return content_text
-
 
     def format_content_p(self, con_text):
         con_ = con_text.split("<p>")
@@ -263,7 +256,6 @@ class AntaranewsSpider(object):
             contents_p.append(con_p)
         content_html = "".join(contents_p)
         return content_html
-
 
     # TODO 图片url
     def get_image_url(self, con):
@@ -296,7 +288,6 @@ class AntaranewsSpider(object):
                 image_url = ""
         return image_url
 
-
     def get_caption(self, html):
         try:
             caption = html.xpath('//p[@class="wp-caption-text"]/text()')[0]
@@ -307,7 +298,6 @@ class AntaranewsSpider(object):
             print(e)
             caption = ""
         return caption
-
 
     def get_pub_time(self, html, column_first):
         global pub_el
@@ -325,7 +315,6 @@ class AntaranewsSpider(object):
             log.info(e)
             pub_time = now_datetime_no()
         return pub_time
-
 
     def filter_html_clear_format(self, format_info):
         if format_info:
@@ -350,7 +339,6 @@ class AntaranewsSpider(object):
 
         return format_info
 
-
     def get_date_am_pm(self, info_):
         global num
         if ":" in info_:
@@ -365,7 +353,6 @@ class AntaranewsSpider(object):
         else:
             num = ""
         return num
-
 
     def get_subhead(self, con):
         if '<div class="quote_old">' in con:
@@ -384,7 +371,6 @@ class AntaranewsSpider(object):
         else:
             subhead = ""
         return subhead
-
 
     # 印尼月份
     def get_month_ydl(self, month):

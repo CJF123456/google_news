@@ -19,7 +19,7 @@ from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import format_content_p, \
-    all_tag_replace_html
+    all_tag_replace_html, format_p_null
 from utils.timeUtil import now_datetime, now_datetime_no, now_time
 from utils.translate import cat_to_chs, translated_cn, en_con_to_cn_con
 from configs.dbconfig import NewsTaskSql
@@ -83,7 +83,7 @@ class AnsaSpider(object):
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         pass
-                       # log.info(self.project_name + " info data already exists!")
+                    # log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
                             url_idd = detail_url.split("notizie")[0]
@@ -221,9 +221,7 @@ class AnsaSpider(object):
             content_text = content_text.replace("&amp;", "&")
         if "<p>VIDEO</p>" in content_text:
             content_text = content_text.split("<p>VIDEO")[0]
-        content_text = content_text.replace("<p><p>", "<p>"). \
-            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
-            "<p>  </p>", "").replace("<p>   </p>", "")
+        content_text = format_p_null(content_text)
         return content_text
 
     # TODO 图片url

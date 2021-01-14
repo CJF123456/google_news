@@ -20,7 +20,7 @@ from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import format_info_int_re, filter_emoji, format_content_p, \
-    all_tag_replace_html_div_a
+    all_tag_replace_html_div_a, format_p_null
 from utils.timeUtil import now_datetime, timestamp_to_str, now_datetime_no
 from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import get_image, update_img
@@ -223,12 +223,10 @@ class DwNewsSpider(object):
                 con_html_ = format_content_p(con_)
                 content_texts.append(con_html_)
             content_text = "".join(cat_to_chs(content_texts))
-            content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>",
-                                                                                                     "").replace(
-                "<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p>:</p>", "").replace("<p>：</p>", "")
             content_text = content_text.split("<p>推荐阅读")[0]
             content_text = content_text.replace("（点击图集浏览）", "").replace("相关阅读", "").replace("（点击浏览大图）", "").replace(
                 "▼想了解更多关于以色列外交的资讯，请点击放大观看：", "").replace("↓想知道不同地方民众在疫情持续期间的生活，请点击放大观看：", "").replace("请点击放大观看：", "")
+            content_text = format_p_null(content_text)
         return content_text
 
     def cn_replace_html(self, con):

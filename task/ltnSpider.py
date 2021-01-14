@@ -19,7 +19,7 @@ from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import filter_html_clear_format, format_content_p, \
-    all_tag_replace_html
+    all_tag_replace_html, format_p_null
 from utils.timeUtil import now_datetime, now_datetime_no
 from utils.translate import cat_to_chs
 from utils.ossUtil import get_image, update_img
@@ -316,7 +316,7 @@ class LtnSpider(object):
             content_text = content_text.replace("     ", "")
             content_text = content_text.replace("<p>  </p>", "")
             content_text = content_text.replace("<p>   </p>", "")
-
+        content_text = format_p_null(content_text)
         return content_text
 
 

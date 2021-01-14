@@ -21,7 +21,7 @@ from configs.dbconfig import NewsTaskSql
 from filters.hashFilter import make_md5, hexists_md5_filter
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import filter_html_clear_format, format_content_p, \
-    all_tag_replace_html
+    all_tag_replace_html, format_p_null
 from utils.timeUtil import now_datetime, now_time, now_datetime_no
 
 
@@ -214,6 +214,8 @@ class BbcSpider(object):
                 con = self.cn_replace_html(con)
                 content_text = format_content_p(con)
                 content_text = all_tag_replace_html(content_text)
+                content_text = format_p_null(content_text)
+
         except Exception as e:
             print(e)
             content_text = ""

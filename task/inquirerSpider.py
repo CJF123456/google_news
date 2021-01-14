@@ -15,11 +15,11 @@ import time
 from bs4 import BeautifulSoup
 from lxml import etree
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import format_content_p, \
-    all_tag_replace_html, get_month_en
+    all_tag_replace_html, get_month_en, format_p_null
 from utils.timeUtil import now_datetime, now_datetime_no
 from utils.translate import cat_to_chs, translated_cn, en_con_to_cn_con
 from configs.dbconfig import NewsTaskSql
@@ -83,7 +83,7 @@ class InquirerSpider(object):
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         pass
-                        #log.info(self.project_name + " info data already exists!")
+                        # log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
                             self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
@@ -132,17 +132,6 @@ class InquirerSpider(object):
                     else:
                         content_text = contents_html
                         cn_content_text = cn_content_
-                    content_text = content_text.replace("<p><p>", "<p>"). \
-                        replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                        "<p></p>",
-                        "").replace(
-                        "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>", "</p>")
-                    cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
-                        replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                        "<p></p>",
-                        "").replace(
-                        "<p>  </p>", "").replace("<p>   </p>", "").replace("</p> <p>", "</p><p>").replace("</ p>",
-                                                                                                          "</p>")
                     spider_time = now_datetime()
                     body = content_text
                     cn_title = cn_title
@@ -177,7 +166,6 @@ class InquirerSpider(object):
                                       self.project_name)
                 else:
                     pass
-
 
     # TODO 内容格式化
     def get_content_html(self, html):
@@ -243,13 +231,10 @@ class InquirerSpider(object):
                 content_text = content_text.split("<p>VIDEO")[0]
             if "<p>—————" in content_text:
                 content_text = content_text.split("<p>—————")[0]
-        content_text = content_text.replace("<p><p>", "<p>"). \
-            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
-            "<p>  </p>", "").replace("<p>   </p>", "").replace("</ p>", "</p>")
+        content_text = format_p_null(content_text)
         if "<p>Click here" in content_text:
             content_text = content_text.split("<p>Click here")[0]
         return content_text
-
 
     # TODO 图片url
     def get_image_url(self, html):
@@ -261,7 +246,6 @@ class InquirerSpider(object):
             image_url = ""
         return image_url
 
-
     def get_caption(self, html):
         try:
             caption = html.xpath('//div[@class="wp-caption aligncenter"]/p[@class="wp-caption-text"]/text()')[0]
@@ -272,7 +256,6 @@ class InquirerSpider(object):
             print(e)
             caption = ""
         return caption
-
 
     def get_pub_time(self, html):
         global pub_el
@@ -295,7 +278,6 @@ class InquirerSpider(object):
             pub_time = now_datetime_no()
         return pub_time
 
-
     def filter_html_clear_format(self, format_info):
         if format_info:
             format_info = format_info.replace('<div>', '').replace('</div>', '').replace('<span>', '').replace(
@@ -316,7 +298,6 @@ class InquirerSpider(object):
             format_info = format_info.split("<p>更多")[0]
 
         return format_info
-
 
     def get_date_am_pm(self, info_):
         global num

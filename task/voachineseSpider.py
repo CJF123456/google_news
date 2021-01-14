@@ -228,7 +228,7 @@ class VoachineseSpider(object):
         else:
             content_text = content_text
         content_text = all_tag_replace_html(content_text)
-        content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
+        content_text = format_p_null(content_text)
         content_text_cn = "".join(cat_to_chs(content_text))
         return content_text_cn
 

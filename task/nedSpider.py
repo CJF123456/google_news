@@ -18,7 +18,7 @@ from configs import useragents
 from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
-from utils.datautil import all_tag_replace_html, format_content_p, get_month_en
+from utils.datautil import all_tag_replace_html, format_content_p, get_month_en, format_p_null
 from utils.timeUtil import now_datetime, now_datetime_no, now_time
 from utils.translate import cat_to_chs, translated_cn, en_con_to_cn_con
 from utils.ossUtil import get_image, update_img
@@ -225,12 +225,7 @@ class NedSpider(object):
             content_text = content_text.replace("&amp;", "&")
         if "\xa0" in content_text:
             content_text = content_text.replace("\xa0", " ")
-        if __name__ == '__main__':
-            content_text = content_text.replace("<p><p>", "<p>"). \
-                replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>", "").replace(
-                "<p>  </p>", "").replace("<p>   </p>", "").replace("<p></p>", "").replace(
-                "<hr/>", "").replace("        ","").replace("       ","").replace("     ","").replace("   ","").replace("﻿ ","")\
-                .replace("<p> ﻿</p>","").replace("<p> </p>","")
+        content_text = format_p_null(content_text)
         if "<p>Event Program" in content_text:
             content_text = content_text.split("<p>Event Program")[0]
         return content_text

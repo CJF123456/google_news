@@ -15,10 +15,10 @@ import time
 from bs4 import BeautifulSoup
 from lxml import etree
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
-from utils.datautil import format_content_p, all_tag_replace_html_div, filter_emoji
+from utils.datautil import format_content_p, all_tag_replace_html_div, filter_emoji, format_p_null
 from utils.timeUtil import now_datetime, now_time, now_datetime_no
 from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import update_img, get_image
@@ -101,7 +101,7 @@ class CnNytimesSpider(object):
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         pass
-                        #log.info(self.project_name + " info data already exists!")
+                        # log.info(self.project_name + " info data already exists!")
                     else:
                         self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
                                         pc_headers, md5, img_url, img_text, source_id)
@@ -215,7 +215,7 @@ class CnNytimesSpider(object):
                 con_text = "</p><p>".join(cons)
                 content_text = con_text.replace("（欢迎点击此处订阅NYT简报，我们将在每个工作日发送最新内容至您的邮箱。）", "")
                 content_text = format_content_p(content_text)
-                content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
+                content_text = format_p_null(content_text)
         except Exception as e:
             print(e)
             content_text = ""

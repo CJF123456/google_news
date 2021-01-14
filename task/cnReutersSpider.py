@@ -22,7 +22,7 @@ from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import filter_emoji, format_info_list_str, filter_html_clear_format, \
-    all_tag_replace_html, format_content_p
+    all_tag_replace_html, format_content_p, format_p_null
 from utils.timeUtil import now_datetime, now_time, now_datetime_no
 
 
@@ -316,6 +316,7 @@ class CnReutersSpider(object):
                 content_text = content_text.split("<p>相关报导")[0]
         else:
             content_text = ""
+        content_text = format_p_null(content_text)
         return content_text
 
     def format_repalce_space(self, format_info):
