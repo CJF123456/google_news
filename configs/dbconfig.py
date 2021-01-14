@@ -10,11 +10,11 @@ import sys
 sys.path.append('..')
 
 class sqlServerConfig:
-    DBHOST = '123.57.158.13'
+    DBHOST = '123.57.xxx.xx'
     DBPORT = 1433
-    DBUSER = 'pachong'
-    DBPWD = 'p@chong825'
-    DBNAME = 'WebInfo'
+    DBUSER = 'xx'
+    DBPWD = 'p@xx'
+    DBNAME = 'xx'
     DBCHAR = 'utf8'
 
 
@@ -22,10 +22,10 @@ class sqlServerConfig:
 class RedisConfig:
     ###################redis数据库库配置################################
     # redis-cli -h 120.26.90.122 -p 6379 -a v1@spider
-    HOST = '47.242.58.76'
+    HOST = '47.242.xx.xx'
     PORT = 6379
     DBID = '0'
-    RPASSWORD = 'qwer1122331'
+    RPASSWORD = 'xxxxxx'
 
 
 class NewsTaskSql:
