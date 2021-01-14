@@ -14,6 +14,24 @@ import re
 import time
 
 
+def format_p_null(format_info):
+    '''
+    格式化<p>
+    '''
+    format_info = format_info.replace("<hr/>", "").replace("        ", "").replace("       ", ""). \
+        replace("     ", "").replace("   ", "").replace("﻿ ", "").replace("<p> ﻿</p>", ""). \
+        replace("\n", "").replace("</ p>", "</p>").replace("\n", ""). \
+        replace("<p>  </p>", ""). \
+        replace("<p>   </p>", "").replace("\n", "").replace("</ p>", "</p>"). \
+        replace("<p>:</p>", "").replace("<p>：</p>", "").replace("<p></p>", "").replace("<p> </p>", ""). \
+        replace("<p> </p>", "").replace("<p>  </p>", "").replace(
+        "<p></p>", "").replace(
+        "<p><p>", "<p>").replace("<p>:</p>", "").replace("<p>：</p>", "").replace("<p><p>", "<p>").replace("</p></p>",
+                                                                                                          "</p>").replace(
+        "<p></p>", "")
+    return format_info
+
+
 def get_uuid1():
     '''
     基于时间戳。由MAC地址、当前时间戳、随机数生成。可以保证全球范围内的唯一性，
@@ -853,6 +871,7 @@ def get_month_en(month_info):
         elif "Dec" in month_info or "dec" in month_info:
             month = "12"
     return month
+
 
 def is_contain_chinese(check_str):
     """
