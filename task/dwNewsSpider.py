@@ -66,14 +66,8 @@ class DwNewsSpider(object):
                         # 发布时间
                         publish_time = item.get('data').get('publishTime')
                         pub_time = timestamp_to_str(publish_time)
-                        pub_date_time = now_datetime_no()
                         md5_ = detail_url
                         md5 = make_md5(md5_)
-                        # if pub_time > pub_date_time:
-                        #     log.info(self.project_name+" 数据不是最新" + pub_time)
-                        #     #hset_md5_filter(md5, self.mmd5)
-                        # else:
-                            # 详情页url
                         detail_url_code = str(format_info_int_re(detail_url))
                         if hexists_md5_filter(md5, self.mmd5):
                             pass
@@ -123,7 +117,6 @@ class DwNewsSpider(object):
                 else:
                     content_text = content_text
                 spider_time = now_datetime()
-                content_text = content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace("<p></p>", "")
                 body = content_text
                 cn_title = title
                 create_time = spider_time
@@ -195,12 +188,12 @@ class DwNewsSpider(object):
         soup = BeautifulSoup(html, 'lxml')
         for divcon in soup.select('article div.sc-bdVaJa.jLaXBp'):
             [s.extract() for s in divcon('figure')]
-            [s.extract() for s in divcon('strong')]
+            #[s.extract() for s in divcon('strong')]
             [s.extract() for s in divcon.find_all("div", {"class": "s2jnsig-0 hZOstq sc-gqjmRU rgrzA"})]
             [s.extract() for s in divcon.find_all("div", {"class": "lvt1ex-0 cPcXSN sc-bdVaJa hVSRSV"})]
             [s.extract() for s in divcon.find_all("div", {"class": "sc-bwzfXH liBCIH sc-bdVaJa hjfdHC"})]
             [s.extract() for s in divcon.find_all("div", {"class": "sc-bdVaJa hVSRSV"})]
-            [s.extract() for s in divcon.find_all("strong", {"class": "s1wvug8s-0 bbEmvD"})]
+            #[s.extract() for s in divcon.find_all("strong", {"class": "s1wvug8s-0 bbEmvD"})]
             locu_content = divcon.prettify()
             con = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
             con = all_tag_replace_html_div_a(con)
@@ -226,6 +219,8 @@ class DwNewsSpider(object):
             content_text = content_text.split("<p>推荐阅读")[0]
             content_text = content_text.replace("（点击图集浏览）", "").replace("相关阅读", "").replace("（点击浏览大图）", "").replace(
                 "▼想了解更多关于以色列外交的资讯，请点击放大观看：", "").replace("↓想知道不同地方民众在疫情持续期间的生活，请点击放大观看：", "").replace("请点击放大观看：", "")
+            if "「版权声明" in content_text:
+                content_text=content_text.split("<p>「版权声明")[0]
             content_text = format_p_null(content_text)
         return content_text
 

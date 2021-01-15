@@ -20,7 +20,7 @@ from mylog.mlog import log
 from utils.ossUtil import get_image, update_img
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql, get_list_page_get_content
 from utils.datautil import format_info_list_str, filter_html_clear_format, \
-    all_tag_replace_html, format_content_p
+    all_tag_replace_html, format_content_p, format_p_null
 from utils.timeUtil import now_datetime, now_datetime_no
 from configs.dbconfig import NewsTaskSql
 from utils.translate import cat_to_chs

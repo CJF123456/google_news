@@ -227,7 +227,7 @@ class DwzhSpider(object):
             if "系列报道说明：" in content:
                 content = content.split("系列报道说明：")[0]
             content = format_content_p(content)
-            content_text = format_p_null(content_text)
+            content_text = format_p_null(content)
         return content
 
 
