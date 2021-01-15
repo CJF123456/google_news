@@ -82,7 +82,7 @@ class DwNewsSpider(object):
                                                         caption, cdnUrl, md5, detail_url_code, source_id)
                             else:
                                 pass
-                log.info(self.project_name + column_first + ' spider succ.')
+                #log.info(self.project_name + column_first + ' spider succ.')
         end_time = time.time()
         log.info(
             self.project_name + ' spider succ ' + now_datetime() + '.time consuming :%.2f' % (end_time - start_time))
