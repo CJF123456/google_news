@@ -15,7 +15,7 @@ import time
 from bs4 import BeautifulSoup
 from lxml import etree
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import format_content_p, \
@@ -24,10 +24,6 @@ from utils.timeUtil import now_datetime, now_datetime_no
 from configs.dbconfig import NewsTaskSql
 from utils.ossUtil import get_image, update_img
 from utils.translate import translated_cn, en_con_to_cn_con
-
-
-# from utils.translate import translated_cn, en_con_to_cn_con
-
 
 # 印尼共和报-国际版
 
@@ -142,14 +138,8 @@ class RepublikaSpider(object):
                         else:
                             content_text = contents_html
                             cn_content_text = cn_content_
-                        content_text = content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                            "<p></p>",
-                            "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "")
-                        cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace(
-                            "<p></p>", "").replace("<p>  </p>", "").replace("<p>   </p>", "")
+                        content_text = format_p_null(content_text)
+                        cn_content_text = format_p_null(cn_content_text)
                         spider_time = now_datetime()
                         body = content_text
                         cn_title = cn_title
@@ -187,8 +177,6 @@ class RepublikaSpider(object):
         else:
             log.info('title spider fail.')
 
-
-
     # TODO 内容格式化
     def get_content_html(self, html):
         global con, con_html
@@ -216,7 +204,6 @@ class RepublikaSpider(object):
         content_text = format_p_null(content_text)
         return content_text
 
-
     # TODO 图片url
     def get_image_url(self, html):
         try:
@@ -226,7 +213,6 @@ class RepublikaSpider(object):
             print(e)
             image_url = ""
         return image_url
-
 
     def get_caption(self, html):
         try:
@@ -239,7 +225,6 @@ class RepublikaSpider(object):
             caption = ""
         return caption
 
-
     # //div[@class="taiching"]/b/text()
     def get_subhead(self, html):
         try:
@@ -250,7 +235,6 @@ class RepublikaSpider(object):
             print(e)
             subhead = ""
         return subhead
-
 
     def get_pub_time(self, html):
         global pub_el
@@ -268,7 +252,6 @@ class RepublikaSpider(object):
             log.info(e)
             pub_time = now_datetime_no()
         return pub_time
-
 
     def filter_html_clear_format(self, format_info):
         if format_info:
@@ -293,7 +276,6 @@ class RepublikaSpider(object):
 
         return format_info
 
-
     def get_date_am_pm(self, info_):
         global num
         if ":" in info_:
@@ -308,7 +290,6 @@ class RepublikaSpider(object):
         else:
             num = ""
         return num
-
 
     def get_title(self, con):
         global con_html

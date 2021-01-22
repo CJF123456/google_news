@@ -127,6 +127,8 @@ class KompasSpider(object):
                     else:
                         content_text = contents_html
                         cn_content_text = cn_content_
+                    content_text = format_p_null(content_text)
+                    cn_content_text = format_p_null(cn_content_text)
                     spider_time = now_datetime()
                     body = content_text
                     cn_title = cn_title
@@ -156,20 +158,24 @@ class KompasSpider(object):
                         keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
                         CrawlTime,
                         Hidden, file_name, file_path)
+                    # 入库mssql
+                    #print(info_val)
+                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                      self.project_name)
 
                     # 入库mssql
-                    time.sleep(2)
-                    if n < 10:
-                        if '/><' not in cn_boty and cn_title != '' and n < 10:
-                            n = n + 1
-                            self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
-                                            pc_headers, md5, source_id, n)
-                        elif cn_title == '':
-                            self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
-                                            pc_headers, md5, source_id, n)
-                            # 入库mssql
-                            data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                              self.project_name)
+                    # time.sleep(2)
+                    # if n < 10:
+                    #     if '/><' not in cn_boty and cn_title != '' and n < 10:
+                    #         n = n + 1
+                    #         self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
+                    #                         pc_headers, md5, source_id, n)
+                    #     elif cn_title == '':
+                    #         self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
+                    #                         pc_headers, md5, source_id, n)
+                    #         # 入库mssql
+                    #         data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                    #                           self.project_name)
                 else:
                     log.info("翻译为空")
 
