@@ -19,8 +19,8 @@ class logger(object):
             log = logging.getLogger()
             formatter = logging.Formatter(
                 '%(asctime)-12s level-%(levelname)-8s thread-%(thread)-8d %(message)s')  # 每行日志的前缀设置
-            fileTimeHandler = TimedRotatingFileHandler(get_log_dir() + str(logname), when="M", interval=15,
-                                                       backupCount=288)
+            fileTimeHandler = TimedRotatingFileHandler(get_log_dir() + str(logname), when="D", interval=15,
+                                                       backupCount=15)
             logging.basicConfig(level=logging.INFO)
             fileTimeHandler.setFormatter(formatter)
             log.addHandler(fileTimeHandler)
