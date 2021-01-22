@@ -15,7 +15,7 @@ import time
 from bs4 import BeautifulSoup
 from lxml import etree
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import format_content_p, \
@@ -83,7 +83,6 @@ class AnsaSpider(object):
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         pass
-                    # log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
                             url_idd = detail_url.split("notizie")[0]
@@ -108,12 +107,6 @@ class AnsaSpider(object):
         if st:
             html = etree.HTML(con)
             pub_time = self.get_pub_time(con)
-            # pub_date_time = now_datetime_no()
-            # if pub_time > pub_date_time:
-            #     log.info("数据不是最新" + pub_time)
-            #     #hset_md5_filter(md5, self.mmd5)
-            # else:
-            #     log.info("新闻时间" + pub_time)
             image_url = self.get_image_url(html)
             caption = self.get_caption(html)
             contents_html = self.get_content_html(con)
@@ -138,14 +131,6 @@ class AnsaSpider(object):
                     else:
                         content_text = contents_html
                         cn_content_text = cn_content_
-                    content_text = content_text.replace("<p><p>", "<p>"). \
-                        replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
-                                                                                                           "").replace(
-                        "<p>  </p>", "").replace("<p>   </p>", "")
-                    cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
-                        replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
-                                                                                                           "").replace(
-                        "<p>  </p>", "").replace("<p>   </p>", "")
                     spider_time = now_datetime()
                     body = content_text
                     cn_title = cn_title
@@ -181,6 +166,7 @@ class AnsaSpider(object):
                 else:
                     log.info("翻译异常len(cn_content_)：" + str(len(cn_content_)))
                     log.info(cn_content_)
+                    log.info(cn_title)
 
     # TODO 替换各种不用的标签
     def filter_html_clear_format(self, format_info):

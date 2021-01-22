@@ -83,7 +83,7 @@ class KompasSpider(object):
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         pass
-                        #log.info(self.project_name + " info data already exists!")
+                        # log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
                             self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
@@ -104,80 +104,65 @@ class KompasSpider(object):
         if st:
             html = etree.HTML(con)
             pub_time = self.get_pub_time(html)
-            pub_date_time = now_datetime_no()
-            if pub_time < pub_date_time:
-                log.info("数据不是最新" + pub_time)
-                #hset_md5_filter(md5, self.mmd5)
+            image_url = self.get_image_url(html)
+            caption = self.get_caption(html)
+            contents_html = self.get_content_html(con)
+            cn_title = translated_cn(title, 'id')
+            if not contents_html:
+                pass
             else:
-                log.info("新闻发布日期：" + pub_time)
-                image_url = self.get_image_url(html)
-                caption = self.get_caption(html)
-                contents_html = self.get_content_html(con)
-                cn_title = translated_cn(title, 'id')
-                if not contents_html:
-                    pass
+                if caption:
+                    cn_caption = translated_cn(caption, 'id')
                 else:
-                    if caption:
-                        cn_caption = translated_cn(caption, 'id')
+                    cn_caption = ""
+                cn_content_ = en_con_to_cn_con(contents_html, 'id')
+                if cn_content_:
+                    if image_url:
+                        ii = get_image(image_url)
+                        r_i = update_img(ii)
+                        img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
+                        content_text = img_ + contents_html
+                        cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
+                        cn_content_text = cn_img_ + cn_content_
                     else:
-                        cn_caption = ""
-                    cn_content_ = en_con_to_cn_con(contents_html, 'id')
-                    cn_content_ = cn_content_.replace("<p><p>", "<p>"). \
-                        replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
-                                                                                                           "").replace(
-                        "<p>  </p>", "").replace("<p>   </p>", "").replace("</p></p>", "</p>")
-                    if cn_content_:
-                        if image_url:
-                            ii = get_image(image_url)
-                            r_i = update_img(ii)
-                            img_ = '<img src="' + r_i + '"/><p>' + caption + '</p>'
-                            content_text = img_ + contents_html
-                            cn_img_ = '<img src="' + r_i + '"/><p>' + cn_caption + '</p>'
-                            cn_content_text = cn_img_ + cn_content_
-                        else:
-                            content_text = contents_html
-                            cn_content_text = cn_content_
-                        content_text = content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
-                                                                                                               "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "").replace("\n", "").strip()
-                        cn_content_text = cn_content_text.replace("<p><p>", "<p>"). \
-                            replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p> </p>", "").replace("<p></p>",
-                                                                                                               "").replace(
-                            "<p>  </p>", "").replace("<p>   </p>", "").replace("\n", "").strip()
-                        spider_time = now_datetime()
-                        body = content_text
-                        cn_title = cn_title
-                        create_time = spider_time
-                        group_name = column_first
-                        update_time = spider_time
-                        website = detail_url
-                        Uri = detail_url
-                        Language = "zh"
-                        DocTime = pub_time
-                        CrawlTime = spider_time
-                        Hidden = 0  # 去确认
-                        file_name = ""
-                        file_path = ""
-                        classification = ""
-                        cn_boty = cn_content_text
-                        column_id = ''
-                        creator = 0
-                        if_top = 0
-                        source_id = source_id
-                        summary = ''
-                        UriId = ''
-                        keyword = ''
-                        info_val = (
-                            body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
-                            if_top,
-                            keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
-                            CrawlTime,
-                            Hidden, file_name, file_path)
-                        # 入库mssql
-                        data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                          self.project_name)
+                        content_text = contents_html
+                        cn_content_text = cn_content_
+                    spider_time = now_datetime()
+                    body = content_text
+                    cn_title = cn_title
+                    create_time = spider_time
+                    group_name = column_first
+                    update_time = spider_time
+                    website = detail_url
+                    Uri = detail_url
+                    Language = "zh"
+                    DocTime = pub_time
+                    CrawlTime = spider_time
+                    Hidden = 0  # 去确认
+                    file_name = ""
+                    file_path = ""
+                    classification = ""
+                    cn_boty = cn_content_text
+                    column_id = ''
+                    creator = 0
+                    if_top = 0
+                    source_id = source_id
+                    summary = ''
+                    UriId = ''
+                    keyword = ''
+                    info_val = (
+                        body, classification, cn_boty, cn_title, column_id, create_time, creator, group_name,
+                        if_top,
+                        keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
+                        CrawlTime,
+                        Hidden, file_name, file_path)
+                    # 入库mssql
+                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                      self.project_name)
+                else:
                     log.info("翻译为空")
+
+
     # TODO 内容格式化
     def get_content_html(self, html):
         global con, con_html
@@ -185,7 +170,7 @@ class KompasSpider(object):
         con_htmls = []
         for divcon in soup.select('div.read__content div'):
             [s.extract() for s in divcon("script")]
-            #[s.extract() for s in divcon("div")]
+            # [s.extract() for s in divcon("div")]
             [s.extract() for s in divcon("blockquote")]  # 外链
             [s.extract() for s in divcon.find_all("strong", {"class": "photo__caption"})]
             locu_content = divcon.prettify()
@@ -206,6 +191,7 @@ class KompasSpider(object):
         content_text = format_p_null(content_text)
         return content_text
 
+
     # TODO 图片url
     def get_image_url(self, html):
         try:
@@ -217,6 +203,7 @@ class KompasSpider(object):
             image_url = ""
         return image_url
 
+
     def get_caption(self, html):
         try:
             caption = html.xpath('//div[@class="photo"]/img/@alt')[0]
@@ -225,6 +212,7 @@ class KompasSpider(object):
             print(e)
             caption = ""
         return caption
+
 
     def get_pub_time(self, html):
         try:
@@ -241,6 +229,7 @@ class KompasSpider(object):
             print(e)
             pub_time = now_datetime()
         return pub_time
+
 
     def format_content_p(self, con_text):
         con_ = con_text.split("<p>")
