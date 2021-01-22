@@ -81,13 +81,13 @@ class KompasSpider(object):
                     detail_url = url_code + "?page=all"
                     md5_ = detail_url
                     md5 = make_md5(md5_)
+                    n = 0
                     if hexists_md5_filter(md5, self.mmd5):
                         pass
-                        # log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
                             self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
-                                            pc_headers, md5, source_id)
+                                            pc_headers, md5, source_id, n)
                 else:
                     pass
 
@@ -98,7 +98,7 @@ class KompasSpider(object):
         return format_info
 
     def get_detail(self, title, detail_url, url_code, column_first, column_second, kw_site,
-                   pc_headers, md5, source_id):
+                   pc_headers, md5, source_id, n):
         global con_, content_text, cn_content_text
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         if st:
@@ -116,7 +116,7 @@ class KompasSpider(object):
                 else:
                     cn_caption = ""
                 cn_content_ = en_con_to_cn_con(contents_html, 'id')
-                if cn_content_:
+                if cn_content_ and cn_title and len(cn_content_) > len(contents_html) / 4:
                     if image_url:
                         ii = get_image(image_url)
                         r_i = update_img(ii)
@@ -156,12 +156,22 @@ class KompasSpider(object):
                         keyword, source_id, summary, title, update_time, website, Uri, UriId, Language, DocTime,
                         CrawlTime,
                         Hidden, file_name, file_path)
+
                     # 入库mssql
-                    data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
-                                      self.project_name)
+                    time.sleep(2)
+                    if n < 10:
+                        if '/><' not in cn_boty and cn_title != '' and n < 10:
+                            n = n + 1
+                            self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
+                                            pc_headers, md5, source_id, n)
+                        elif cn_title == '':
+                            self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
+                                            pc_headers, md5, source_id, n)
+                            # 入库mssql
+                            data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
+                                              self.project_name)
                 else:
                     log.info("翻译为空")
-
 
     # TODO 内容格式化
     def get_content_html(self, html):
@@ -191,7 +201,6 @@ class KompasSpider(object):
         content_text = format_p_null(content_text)
         return content_text
 
-
     # TODO 图片url
     def get_image_url(self, html):
         try:
@@ -203,7 +212,6 @@ class KompasSpider(object):
             image_url = ""
         return image_url
 
-
     def get_caption(self, html):
         try:
             caption = html.xpath('//div[@class="photo"]/img/@alt')[0]
@@ -212,7 +220,6 @@ class KompasSpider(object):
             print(e)
             caption = ""
         return caption
-
 
     def get_pub_time(self, html):
         try:
@@ -229,7 +236,6 @@ class KompasSpider(object):
             print(e)
             pub_time = now_datetime()
         return pub_time
-
 
     def format_content_p(self, con_text):
         con_ = con_text.split("<p>")
