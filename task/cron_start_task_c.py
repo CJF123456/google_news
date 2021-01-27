@@ -92,10 +92,10 @@ def parse_c():
     # 中文
     start_time = time.time()
     log.info('parse_c spider start... ')
-    parse_en()
-    parse_cn()
     parse_id()
     parse_it()
+    parse_en()
+    parse_cn()
     end_time = time.time()
     log.info('parse_c spider succ.' + now_datetime() + '.time consuming :%.2f' % (end_time - start_time))
 
