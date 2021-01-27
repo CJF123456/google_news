@@ -157,6 +157,7 @@ class AljazeeraSpider(object):
                     cn_content_text = cn_content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace(
                         "<p></p>", "")
                     content_text = format_p_null(content_text)
+
                     cn_content_text = format_p_null(cn_content_text)
                     spider_time = now_datetime()
                     # 采集时间
