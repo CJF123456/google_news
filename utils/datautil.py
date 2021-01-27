@@ -28,7 +28,7 @@ def format_p_null(format_info):
         "<p></p>", "").replace(
         "<p><p>", "<p>").replace("<p>:</p>", "").replace("<p>：</p>", "").replace("<p><p>", "<p>"). \
         replace("</p></p>", "</p>").replace("<p></p>", "").replace("<p></p>", "").replace("/><p></p>", "/>").replace(
-        "\xa0", "")
+        "\xa0", "").replace("<p></p>", "")
     return format_info
 
 

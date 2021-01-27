@@ -78,7 +78,7 @@ class AljazeeraSpider(object):
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         pass
-                        #log.info(self.project_name + " info data already exists!")
+                        # log.info(self.project_name + " info data already exists!")
                     else:
                         if "program" in detail_url:
                             pass
@@ -156,6 +156,8 @@ class AljazeeraSpider(object):
                         "")
                     cn_content_text = cn_content_text.replace("<p><p>", "<p>").replace("</p></p>", "</p>").replace(
                         "<p></p>", "")
+                    content_text = format_p_null(content_text)
+                    cn_content_text = format_p_null(cn_content_text)
                     spider_time = now_datetime()
                     # 采集时间
                     body = content_text
@@ -195,7 +197,6 @@ class AljazeeraSpider(object):
         else:
             pass
 
-
     def format_repalce_space(self, format_info):
         if "</ p> <p>" in format_info:
             format_info = format_info.replace("</ p> <p>", "</p><p>")
@@ -206,7 +207,6 @@ class AljazeeraSpider(object):
         if " / p> <p>" in format_info:
             format_info = format_info.replace(" / p> <p>", "</p><p>")
         return format_info
-
 
     # TODO 内容格式化
     def get_content_html(self, html):
@@ -230,9 +230,8 @@ class AljazeeraSpider(object):
         content_text = all_tag_replace_html(content_text)
         if "&amp;" in content_text:
             content_text.replace("&amp;", "&")
-        content_text =format_p_null(content_text)
+        content_text = format_p_null(content_text)
         return content_text
-
 
     # TODO 图片url
     def get_image_url(self, html):
@@ -244,7 +243,6 @@ class AljazeeraSpider(object):
             image_url = ""
         return image_url
 
-
     def get_title_html(self, html):
         try:
             title_el = html.xpath(
@@ -255,7 +253,6 @@ class AljazeeraSpider(object):
             title = ""
         return title
 
-
     def get_caption_html(self, html):
         try:
             img_text = html.xpath('//figure[@class="article-featured-image"]/figcaption/text()')
@@ -264,7 +261,6 @@ class AljazeeraSpider(object):
             print(e)
             img_text = ""
         return img_text
-
 
     def get_subhead_text(self, html):
         try:
@@ -278,7 +274,6 @@ class AljazeeraSpider(object):
         else:
             subhead_text = ""
         return subhead_text
-
 
     def pub_time_html(self, html):
         try:

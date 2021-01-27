@@ -167,6 +167,8 @@ class ThejakartaSpider(object):
                             "<p></p>",
                             "").replace(
                             "<p>  </p>", "").replace("<p>   </p>", "").replace("\n", "").strip()
+                        content_text = format_p_null(content_text)
+                        cn_content_text = format_p_null(cn_content_text)
                         spider_time = now_datetime()
                         body = content_text
                         cn_title = cn_title
