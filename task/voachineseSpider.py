@@ -87,7 +87,7 @@ class VoachineseSpider(object):
                 else:
                     if url_code and title:
                         if len(url_code) <= 16:
-                            log.info("video url...")
+                            # log.info("video url...")
                             pass
                         else:
                             if "https://www.voachinese.com" in url_code:
@@ -98,7 +98,7 @@ class VoachineseSpider(object):
                             md5 = make_md5(md5_)
                             if hexists_md5_filter(md5, self.mmd5):
                                 pass
-                                #log.info(self.project_name + " info data already exists!")
+                                # log.info(self.project_name + " info data already exists!")
                             else:
                                 if detail_url.startswith('https://www.voachinese.com/a/') and detail_url.endswith(
                                         ".html"):
@@ -131,11 +131,6 @@ class VoachineseSpider(object):
         html = etree.HTML(con)
         image_url = self.get_image_url(html)
         pub_time = self.get_pub_time(html)
-        pub_date_time = now_datetime_no()
-        # if pub_time < pub_date_time:
-        #     log.info("数据不是最新" + pub_time)
-        #     hset_md5_filter(md5, self.mmd5)
-        # else:
         caption = self.get_caption(html)
         tag_con = self.get_tag(html)
         if st:
@@ -184,7 +179,6 @@ class VoachineseSpider(object):
                 data_insert_mssql(info_val, NewsTaskSql.t_doc_info_insert, md5, self.mmd5,
                                   self.project_name)
 
-
     def get_pub_time(self, html):
         try:
             pub_time_el = html.xpath('.//span[@class="date"]/time/text()')
@@ -194,7 +188,6 @@ class VoachineseSpider(object):
             print(e)
             pub_time = now_datetime()
         return pub_time
-
 
     # TODO 内容格式化
     def get_content_html(self, html, tag_con):
@@ -232,7 +225,6 @@ class VoachineseSpider(object):
         content_text_cn = "".join(cat_to_chs(content_text))
         return content_text_cn
 
-
     # TODO 图片url
     def get_image_url(self, html):
         try:
@@ -243,7 +235,6 @@ class VoachineseSpider(object):
             image_url = ""
         return image_url
 
-
     def get_caption(self, html):
         try:
             caption = html.xpath('//div[@class="cover-media"]/figure/div[@class="img-wrap"]//img/@alt')
@@ -252,7 +243,6 @@ class VoachineseSpider(object):
             print(e)
             caption = ""
         return caption
-
 
     def get_tag(self, html):
         try:
