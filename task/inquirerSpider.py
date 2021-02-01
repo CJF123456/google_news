@@ -275,9 +275,11 @@ class InquirerSpider(object):
             mis = self.get_date_am_pm(hour_mis)
             month = get_month_en(month_)
             pub_time = year_ + "-" + month + "-" + day_ + " " + mis
-        except Exception  as e:
+            if len(pub_time) == 16:
+                pub_time = pub_time + ":00"
+        except Exception as e:
             print(e)
-            pub_time = now_datetime_no()
+            pub_time = now_datetime()
         return pub_time
 
     def filter_html_clear_format(self, format_info):

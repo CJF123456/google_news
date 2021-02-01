@@ -293,6 +293,22 @@ class AnsaSpider(object):
             month = 12
         elif "gennaio" in month:
             month = 1
+        elif "febbraio" in month or "febb" in month:
+            month = 2
+        elif "marzo" in month or "marz" in month:
+            month = 3
+        elif "aprile" in month or "apr" in month:
+            month = 4
+        elif "Maggio" in month or "maggio" in month:
+            month = 5
+        elif "giugno" in month or "giu" in month:
+            month = 6
+        elif "luglio" in month or "luglio" in month:
+            month = 7
+        elif "agosto" in month or "agosto" in month:
+            month = 8
+        elif "settembre" in month or "sett" in month:
+            month = 9
         return month
 
 

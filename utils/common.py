@@ -343,7 +343,7 @@ def data_insert_mssql(info_val, sql, md5, mmd5, project_name):
                 mail_title = project_name + txt
                 mail_body = mail_title + " Please check it. weather no Included."
                 log.error(mail_title)
-                print(info_val)
+                log.error(info_val)
             # send_mail_to(mail_title, mail_body
     else:
         try:
@@ -360,7 +360,7 @@ def data_insert_mssql(info_val, sql, md5, mmd5, project_name):
                 mail_title = project_name + txt
                 mail_body = mail_title + " Please check it. weather no Included."
                 log.error(mail_title)
-                print(info_val)
+                log.error(info_val)
             # send_mail_to(mail_title, mail_body
 
 
