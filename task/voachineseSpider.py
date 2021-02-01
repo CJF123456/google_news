@@ -82,8 +82,9 @@ class VoachineseSpider(object):
                 except Exception as e:
                     print(e)
                     url_type = ""
-                if url_type:
-                    log.info("video url......")
+                if not url_type:
+                    pass
+                    #log.info("video url......")
                 else:
                     if url_code and title:
                         if len(url_code) <= 16:
