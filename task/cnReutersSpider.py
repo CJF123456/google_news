@@ -18,7 +18,7 @@ from configs.dbconfig import NewsTaskSql
 from lxml import etree
 from utils.ossUtil import get_image, update_img
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import filter_emoji, format_info_list_str, filter_html_clear_format, \
@@ -106,14 +106,12 @@ class CnReutersSpider(object):
                                                 md5 = make_md5(md5_)
                                                 if hexists_md5_filter(md5, self.mmd5):
                                                     pass
-                                                    #log.info(self.project_name + " info data already exists!")
                                                 else:
                                                     if not "video" in detail_url:
-                                                        self.get_detail(title, detail_url, url_code, column_first,
-                                                                        column_second, kw_site,
-                                                                        pc_headers, md5, source_id)
+                                                        self.get_detail(title, detail_url, column_first, pc_headers,
+                                                                        md5, source_id)
                                                     else:
-                                                        log.info("video url")
+                                                        pass
                                         else:
                                             pass
             else:
@@ -146,14 +144,12 @@ class CnReutersSpider(object):
                             md5 = make_md5(md5_)
                             if hexists_md5_filter(md5, self.mmd5):
                                 pass
-                                #log.info(self.project_name + " info data already exists!")
+                                # log.info(self.project_name + " info data already exists!")
                             else:
                                 if not "video" in detail_url:
-                                    self.get_detail(title, detail_url, url_code, column_first,
-                                                    column_second, kw_site,
-                                                    pc_headers, md5, source_id)
+                                    self.get_detail(title, detail_url, column_first, pc_headers, md5, source_id)
                                 else:
-                                    log.info("video url")
+                                    pass
                     else:
                         pass
 
@@ -186,17 +182,12 @@ class CnReutersSpider(object):
             caption = caption.split("REUTERS")[0]
             return caption
 
-    def get_detail(self, title, detail_url, url_code, column_first, column_second, kw_site,
+    def get_detail(self, title, detail_url, column_first,
                    pc_headers, md5, source_id):
         global con_html, content_text, image_text
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         cdnUrl = self.get_image_url(con)
         pub_time = self.get_pub_time(con)
-        #pub_date_time = now_datetime_no()
-        # if pub_time < pub_date_time:
-        #     log.info("数据不是最新" + pub_time)
-        #     hset_md5_filter(md5, self.mmd5)
-        # else:
         if st:
             caption = self.get_caption(con)
             content = self.get_content_html(con)
@@ -325,18 +316,21 @@ class CnReutersSpider(object):
         return format_info
 
     def get_image_url(self, con):
-        image_el = con.split('<script type="application/ld+json">')[1].split("</script>")[0]
-        if image_el:
-            try:
-                image_json = json.loads(image_el)
-                image_url = image_json.get('image')['url']
-                if "https://s1.reutersmedia.net/resources_v2/images/rcom-default.png?w=800" in image_url:
-                    image_url=''
-            except Exception as e:
-                print(e)
-                image_url = ''
+        if '<script type="application/ld+json">' in con:
+            image_el = con.split('<script type="application/ld+json">')[1].split("</script>")[0]
+            if image_el:
+                try:
+                    image_json = json.loads(image_el)
+                    image_url = image_json.get('image')['url']
+                    if "https://s1.reutersmedia.net/resources_v2/images/rcom-default.png?w=800" in image_url:
+                        image_url = ''
+                except Exception as e:
+                    print(e)
+                    image_url = ''
+            else:
+                image_url = ""
         else:
-            image_url = ""
+            image_url=""
         return image_url
 
 
