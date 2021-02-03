@@ -15,13 +15,13 @@ import time
 from bs4 import BeautifulSoup
 from lxml import etree
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.ossUtil import get_image, update_img
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql, get_list_page_get_content
 from utils.datautil import format_info_list_str, filter_html_clear_format, \
     all_tag_replace_html, format_content_p, format_p_null
-from utils.timeUtil import now_datetime, now_datetime_no
+from utils.timeUtil import now_datetime
 from configs.dbconfig import NewsTaskSql
 from utils.translate import cat_to_chs
 
@@ -111,9 +111,7 @@ class VoachineseSpider(object):
                                     elif "eoa" in detail_url:
                                         pass
                                     else:
-                                        self.get_detail(title, detail_url, url_code, column_first, column_second,
-                                                        kw_site,
-                                                        pc_headers, md5, source_id)
+                                        self.get_detail(title, detail_url, column_first,pc_headers, md5, source_id)
                                 else:
                                     pass
                     else:
@@ -125,8 +123,7 @@ class VoachineseSpider(object):
                 "<em>", "").replace("</em>", "").replace("<p></p>", "")
         return format_info
 
-    def get_detail(self, title, detail_url, url_code, column_first, column_second, kw_site,
-                   pc_headers, md5, source_id):
+    def get_detail(self, title, detail_url, column_first,pc_headers, md5, source_id):
         st, con = get_list_page_get(detail_url, pc_headers, 'utf-8')
         html = etree.HTML(con)
         image_url = self.get_image_url(html)
