@@ -180,6 +180,7 @@ class VoachineseSpider(object):
         try:
             pub_time_el = html.xpath('.//span[@class="date"]/time/text()')
             pub_time_ = format_info_list_str(pub_time_el).strip()
+            pub_time_=pub_time_.replace("最后更新：", "").strip()
             pub_time = pub_time_.replace("年", "-").replace("月", "-").replace("日", " ").lstrip() + ":00"
         except Exception as e:
             print(e)

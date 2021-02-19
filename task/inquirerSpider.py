@@ -277,6 +277,7 @@ class InquirerSpider(object):
             pub_time = year_ + "-" + month + "-" + day_ + " " + mis
             if len(pub_time) == 16:
                 pub_time = pub_time + ":00"
+
         except Exception as e:
             print(e)
             pub_time = now_datetime()
@@ -307,15 +308,19 @@ class InquirerSpider(object):
         global num
         if ":" in info_:
             hour = info_.split(" ")[0].split(":")[0]
+
             mis = info_.split(" ")[0].split(":")[1]
             mp = info_.split(" ")[1]
             if "am" in mp or "AM" in mp:
                 num = info_.replace("am", "").strip()
             else:
-                num = int(hour) + 12
-                num = str(num) + ":" + mis
+                hour_ = int(hour) + 12
+                if hour_==24:
+                    hour_="00"
+                num = str(hour_) + ":" + mis
         else:
             num = ""
+
         return num
 
 
