@@ -15,7 +15,7 @@ import time
 from bs4 import BeautifulSoup
 from lxml import etree
 from configs import useragents
-from filters.hashFilter import make_md5, hexists_md5_filter, hset_md5_filter
+from filters.hashFilter import make_md5, hexists_md5_filter
 from mylog.mlog import log
 from utils.common import get_list_page_get, get_spider_kw_mysql, data_insert_mssql
 from utils.datautil import filter_html_clear_format, format_content_p, \
@@ -81,7 +81,7 @@ class ThejakartaSpider(object):
                     md5 = make_md5(md5_)
                     if hexists_md5_filter(md5, self.mmd5):
                         pass
-                        #log.info(self.project_name + " info data already exists!")
+                        # log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url and title:
                             self.get_detail(title, detail_url, url_code, column_first, column_second, kw_site,
@@ -109,11 +109,41 @@ class ThejakartaSpider(object):
                     md52 = make_md5(md5_2)
                     if hexists_md5_filter(md52, self.mmd5):
                         pass
-                        #log.info(self.project_name + " info data already exists!")
+                        # log.info(self.project_name + " info data already exists!")
                     else:
                         if detail_url2 and title2:
                             self.get_detail(title2, detail_url2, url_code2, column_first, column_second, kw_site,
                                             pc_headers, md52, source_id)
+                else:
+                    pass
+            els3 = html.xpath(
+                '//div[@class="latestDetail"]/a[2]')
+            for el3 in els3:
+                try:
+                    url_code3 = el3.xpath('./@href')
+                    url_code3 = "".join(url_code3)
+                except Exception as e:
+                    print(e)
+                    url_code3 = ""
+                try:
+                    title3 = el3.xpath('./h2/text()')
+                    title3 = "".join(title3).replace("\n", "").strip()
+                except Exception as e:
+                    print(e)
+                    title3 = ""
+                if url_code3 and title3:
+                    detail_url3 = "https://www.thejakartapost.com" + url_code3
+                    md5_3 = detail_url3
+                    md53 = make_md5(md5_3)
+                    if hexists_md5_filter(md53, self.mmd5):
+                        pass
+                        # log.info(self.project_name + " info data already exists!")
+                    else:
+                        if detail_url3 and title3:
+                            self.get_detail(title3, detail_url3, url_code3, column_first, column_second, kw_site,
+                                            pc_headers, md53, source_id)
+                        else:
+                            pass
                 else:
                     pass
 
@@ -204,7 +234,6 @@ class ThejakartaSpider(object):
                     else:
                         pass
 
-
     # TODO 内容格式化
     def get_content_html(self, html):
         global con, con_html
@@ -231,7 +260,6 @@ class ThejakartaSpider(object):
         content_text = format_p_null(content_text)
         return content_text
 
-
     # TODO 图片url
     def get_image_url(self, html):
         try:
@@ -242,7 +270,6 @@ class ThejakartaSpider(object):
             image_url = ""
         return image_url
 
-
     def get_caption(self, html):
         try:
             caption = html.xpath('//span[@class="created"]/text()')[0]
@@ -251,7 +278,6 @@ class ThejakartaSpider(object):
             print(e)
             caption = ""
         return caption
-
 
     def get_pub_time(self, html):
         try:
@@ -269,7 +295,12 @@ class ThejakartaSpider(object):
             try:
                 pub_time_el = html.xpath('.//span[@class="time"]/text()')
                 now_time = "".join(pub_time_el).replace("\n", "").replace("/   ", "").strip()
-                now_time = self.get_hour_mis(now_time) + ":00"
+                mis = self.get_hour_mis(now_time)
+                if mis:
+                    now_time = mis + ":00"
+                else:
+                    now_time = "00:00:00"
+
             except Exception as e:
                 print(e)
                 now_time = time.strftime("%H:%M:%S", time.localtime(time.time()))
@@ -279,7 +310,6 @@ class ThejakartaSpider(object):
             pub_time = now_datetime()
 
         return pub_time
-
 
     def get_hour_mis(self, info_):
         global num
@@ -317,8 +347,11 @@ class ThejakartaSpider(object):
                 num = num + ":" + mis
         else:
             num = ""
+        if num:
+            pass
+        else:
+            num = "00:00"
         return num
-
 
     def get_login(self, html):
         try:
