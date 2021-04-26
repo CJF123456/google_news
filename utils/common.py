@@ -114,7 +114,7 @@ def download_html_get_content(url, headers, charset=None):
                 if charset:
                     content = r.content.decode(charset)
                 else:
-                    content = r.content
+                    content = r.content.decode(charset)
             else:
                 content = ''
     except Exception as e:

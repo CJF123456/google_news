@@ -211,7 +211,7 @@ class NedSpider(object):
             [s.extract() for s in divcon("h1")]
             [s.extract() for s in divcon("figure")]
             [s.extract() for s in divcon("font")]
-            [s.extract() for s in divcon("div")]
+            #[s.extract() for s in divcon("div")]
             locu_content = divcon.prettify()
             con_ = re.sub(r'(<[^>\s]+)\s[^>]+?(>)', r'\1\2', locu_content)
             con_ = self.filter_html_clear_format(con_)
