@@ -300,9 +300,10 @@ class ThejakartaSpider(object):
                     now_time = mis + ":00"
                 else:
                     now_time = "00:00:00"
-
             except Exception as e:
                 print(e)
+                now_time = time.strftime("%H:%M:%S", time.localtime(time.time()))
+            if "00:00:00" in now_time:
                 now_time = time.strftime("%H:%M:%S", time.localtime(time.time()))
             pub_time = day_time + " " + now_time
         except Exception as e:
